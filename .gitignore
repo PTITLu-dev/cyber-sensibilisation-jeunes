@@ -9,3 +9,8 @@ desktop.ini
 # Éditeurs
 .vscode/
 .idea/
+
+# Pages de présentation non publiées (couvertures ESISAR + logo)
+intro.html
+conclusion.html
+assets/logo-esisar.png

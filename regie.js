@@ -52,12 +52,7 @@
       wm.textContent = "DÉMO";
       document.body.appendChild(wm);
     }
-    if (!document.getElementById("fs-hint")) {
-      const h = document.createElement("div");
-      h.id = "fs-hint";
-      h.innerHTML = 'Projection : passez en plein écran avec <kbd>F11</kbd> &nbsp;·&nbsp; régie : <kbd>Espace</kbd> avancer · <kbd>←</kbd> reculer · <kbd>R</kbd> reset';
-      document.body.appendChild(h);
-    }
+    /* (Barre de commandes « F11 / Espace / … » retirée : rien ne s'affiche plus en haut.) */
     if (!document.getElementById("step-indicator")) {
       const s = document.createElement("div");
       s.id = "step-indicator";
@@ -75,9 +70,11 @@
     /* --- Enchaînement automatique des scènes (version "complète") --- */
     CHAIN: true,
     SCENES: [
+      "intro.html",
       "0-accroche.html", "1a-profil.html", "1b-recherche.html", "1c-fiche.html",
       "2-motdepasse.html", "3-connexion.html", "4-planb.html", "5-compte.html",
-      "6-reverse.html", "6b-archive.html", "7-recrutement.html", "8-cloture.html"
+      "6-reverse.html", "6b-archive.html", "7-recrutement.html", "8-cloture.html",
+      "conclusion.html"
     ],
     _file: function () { return (location.pathname.split("/").pop() || "").toLowerCase(); },
     _sceneIndex: function () { return this.SCENES.indexOf(this._file()); },
@@ -107,7 +104,6 @@
         setTimeout(Regie._fitStage, 300);
         var startAt = (location.hash === "#end") ? Regie.total : 0;
         Regie.goTo(startAt, -1);
-        Regie.showHint((Regie.CHAIN && Regie._sceneIndex() > 0) ? 1600 : 4200);  // rappel plein écran
       };
       if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", start);
