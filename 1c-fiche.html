@@ -1,0 +1,70 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1c — Fiche de synthèse</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .fiche-wrap { flex:1; display:flex; flex-direction:column; justify-content:center; max-width:1100px; margin:0 auto; width:100%; }
+  .fiche-card { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:40px 48px; box-shadow:var(--shadow); }
+  .fiche-head { display:flex; align-items:center; gap:18px; margin-bottom:28px; }
+  .fiche-head .tag { background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:6px 14px; font:600 var(--fs-small)/1 var(--sys-mono); color:var(--ink-soft); }
+  .rows { display:flex; flex-direction:column; }
+  .frow { display:grid; grid-template-columns:260px 1fr; gap:24px; padding:16px 0; border-bottom:1px solid var(--line);
+          font-size:var(--fs-body); }
+  .frow .lbl { color:var(--ink-dim); }
+  .frow .val { color:var(--ink); font-weight:600; }
+  .final { margin-top:34px; }
+  .final .banner-red {
+    display:flex; align-items:center; justify-content:center; gap:18px; text-align:center;
+    background:var(--danger); color:#fff; font-size:52px; font-weight:800; line-height:1.1;
+    padding:30px 40px; border-radius:18px; box-shadow:0 14px 48px rgba(229,72,77,.45);
+    animation:redpulse 1.6s ease-in-out infinite;
+  }
+  @keyframes redpulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.02)} }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="fiche-wrap">
+    <div class="kicker">Ce qu'un inconnu a reconstitué — sans rien « pirater »</div>
+    <div class="fiche-card">
+      <div class="fiche-head">
+        <h1>Fiche de synthèse</h1>
+        <span class="tag">source : 100&nbsp;% public</span>
+      </div>
+      <div class="rows">
+        <div class="frow reveal" data-step="1"><span class="lbl">Identité</span><span class="val">{{prenom}} {{nom}} — pseudo {{pseudo}}</span></div>
+        <div class="frow reveal" data-step="2"><span class="lbl">Année de naissance</span><span class="val">{{annee}} (anniv. {{anniv}})</span></div>
+        <div class="frow reveal" data-step="3"><span class="lbl">Animal</span><span class="val">{{chien}} 🐶</span></div>
+        <div class="frow reveal" data-step="4"><span class="lbl">Sport / club</span><span class="val">{{sport}} · {{club}}</span></div>
+        <div class="frow reveal" data-step="5"><span class="lbl">Ville</span><span class="val">{{ville}}</span></div>
+        <div class="frow reveal" data-step="6"><span class="lbl">Créneaux récurrents</span><span class="val">mardi &amp; jeudi 18h–20h, gymnase municipal</span></div>
+        <div class="frow reveal" data-step="7"><span class="lbl">Période d'absence</span><span class="val">~10 jours chez mamie à {{mamie_ville}}</span></div>
+      </div>
+      <div class="final reveal" data-step="8">
+        <div class="banner-red">🔓 Tout ça est PUBLIC — on n'a rien piraté.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+Regie.init({
+  total: 8,
+  name: "fiche",
+  onStep: function (cur) {
+    document.querySelectorAll(".reveal[data-step]").forEach(function (el) {
+      el.classList.toggle("on", parseInt(el.dataset.step, 10) <= cur);
+    });
+  }
+});
+</script>
+</body>
+</html>

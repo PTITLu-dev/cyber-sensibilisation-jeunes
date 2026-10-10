@@ -1,0 +1,271 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1a — Profil (reconstitution pédagogique)</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  /* Reconstitution pédagogique d'une mise en page de profil public — statique, locale. */
+  .stage { padding:40px 56px; }
+  .ig { width:100%; max-width:1240px; }
+  .ig-head { display:flex; gap:48px; align-items:center; margin-bottom:18px; }
+  .ig-avatar { width:168px; height:168px; border-radius:50%; flex:none; }
+  .ig-avatar.ph { border-radius:50%; }
+  .ig-meta { flex:1; }
+  .ig-row1 { display:flex; align-items:center; gap:24px; margin-bottom:14px; }
+  .ig-user { font-size:var(--fs-h2); font-weight:400; }
+  .ig-btn { background:var(--accent); color:#fff; border:none; border-radius:9px; padding:8px 18px;
+            font-size:var(--fs-small); font-weight:600; }
+  .ig-btn.ghost { background:var(--panel-2); color:var(--ink); }
+  .ig-stats { display:flex; gap:48px; font-size:24px; margin-bottom:18px; }
+  .ig-stats b { font-weight:700; }
+  .ig-bio { font-size:24px; line-height:1.6; }
+  .ig-bio .name { font-weight:700; }
+
+  .ig-highlights { display:flex; gap:32px; margin:20px 0 16px; }
+  .hl { text-align:center; width:108px; position:relative; }
+  .hl .cap { font-size:16px; }
+  .hl .ring { width:84px; height:84px; border-radius:50%; margin:0 auto 10px; padding:3px;
+              background:conic-gradient(from 0deg, #c084fc, #8b5cf6, #a78bfa, #c084fc); }
+  .hl .ring > div { width:100%; height:100%; border-radius:50%; border:3px solid var(--bg); }
+  .hl .cap { font-size:13px; color:var(--ink-soft); }
+
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; }
+  .tile { position:relative; height:272px; cursor:pointer; }
+  .tile .ph { width:100%; height:100%; }
+  .tile .cap-mini {
+    position:absolute; z-index:4; left:0; right:0; bottom:0; padding:8px 10px;
+    background:linear-gradient(transparent, rgba(0,0,0,.72));
+    font-size:13px; color:#fff; opacity:0; transition:opacity .25s;
+  }
+  .tile:hover .cap-mini { opacity:1; }
+  .tile-date { position:absolute; z-index:4; top:9px; left:9px; background:rgba(0,0,0,.6);
+               color:#fff; font-size:15px; font-weight:600; padding:4px 11px; border-radius:7px; }
+  .lb-date { font-size:17px; color:var(--ink-dim); }
+
+  /* Lightbox post agrandi */
+  #lightbox {
+    position:fixed; inset:0; z-index:8000; background:rgba(5,7,10,.9);
+    display:none; align-items:center; justify-content:center; padding:5vh 5vw;
+  }
+  #lightbox.on { display:flex; }
+  .lb-card { background:var(--panel); border:1px solid var(--line); border-radius:16px;
+             display:flex; max-width:1100px; width:100%; max-height:88vh; overflow:hidden; }
+  .lb-img { flex:1.3; background:#000; }
+  .lb-img .ph { width:100%; height:100%; min-height:460px; }
+  .lb-side { flex:1; padding:26px 28px; display:flex; flex-direction:column; gap:14px; }
+  .lb-side .u { display:flex; align-items:center; gap:12px; font-weight:600; }
+  .lb-side .u .dot { width:34px; height:34px; border-radius:50%; background:var(--panel-2); }
+  .lb-caption { font-size:var(--fs-small); line-height:1.5; color:var(--ink); }
+  .lb-close { position:absolute; top:22px; right:30px; color:#fff; font-size:34px; cursor:pointer; }
+  .lb-hint { font-size:13px; color:var(--ink-dim); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="ig">
+    <div class="ig-head">
+      <div class="ig-avatar ph" data-label="[avatar]">
+        <img src="assets/sarah.jpg" alt="avatar" onerror="this.classList.add('failed')">
+      </div>
+      <div class="ig-meta">
+        <div class="ig-row1">
+          <span class="ig-user">{{pseudo}}</span>
+          <button class="ig-btn" tabindex="-1">Suivre</button>
+          <button class="ig-btn ghost" tabindex="-1">Message</button>
+        </div>
+        <div class="ig-stats">
+          <span><b>34</b> publications</span>
+          <span><b>412</b> abonnés</span>
+          <span><b>387</b> abonnements</span>
+        </div>
+        <div class="ig-bio">
+          <div class="name">{{prenom}}</div>
+          🤾‍♀️ {{club}} · {{ville}}<br>
+          🐶 {{chien}} · née en {{annee}}<br>
+          « on lâche rien 💪 »
+        </div>
+      </div>
+    </div>
+
+    <!-- Stories épinglées -->
+    <div class="ig-highlights">
+      <div class="hl" data-post="5">
+        <div class="ring"><div class="ph" data-label="☀️"></div></div>
+        <div class="cap">Vacances</div>
+        <div class="crumb-mark" data-step="5" style="inset:-6px 6px 22px 6px;"></div>
+      </div>
+      <div class="hl">
+        <div class="ring"><div class="ph" data-label="🏐"></div></div>
+        <div class="cap">Matchs</div>
+      </div>
+      <div class="hl">
+        <div class="ring"><div class="ph" data-label="🎂"></div></div>
+        <div class="cap">Anniv</div>
+      </div>
+    </div>
+
+    <!-- Grille de posts -->
+    <div class="grid">
+      <div class="tile" data-post="1">
+        <div class="ph" data-label="post-anniv.jpg"><img src="assets/post-anniv.jpg" alt="post anniversaire" onerror="this.classList.add('failed')"></div>
+        <div class="cap-mini">15 ans aujourd'hui 🎂</div>
+        <div class="crumb-mark" data-step="1" style="inset:4px;"></div>
+      </div>
+      <div class="tile" data-post="2">
+        <div class="ph" data-label="post-chien.jpg"><img src="assets/post-chien.jpg" alt="post chien" onerror="this.classList.add('failed')"></div>
+        <div class="cap-mini">mon {{chien}} d'amour 🐶</div>
+        <div class="crumb-mark" data-step="2" style="inset:4px;"></div>
+      </div>
+      <div class="tile" data-post="3">
+        <div class="ph" data-label="post-maillot.jpg"><img src="assets/post-maillot.jpg" alt="post maillot" onerror="this.classList.add('failed')"></div>
+        <div class="cap-mini">fière de mon club 💪</div>
+        <div class="crumb-mark" data-step="3" style="inset:4px;"></div>
+      </div>
+      <div class="tile" data-post="4">
+        <div class="ph" data-label="post-rue.jpg"><img src="assets/post-rue.jpg" alt="post rue" onerror="this.classList.add('failed')"></div>
+        <div class="cap-mini">après l'entraînement 🚶‍♀️</div>
+        <div class="crumb-mark" data-step="4" style="inset:4px;"></div>
+      </div>
+      <div class="tile" data-post="6">
+        <div class="ph" data-label="post.jpg"><img src="assets/post-5.jpg" alt="post" onerror="this.classList.add('failed')"></div>
+        <div class="cap-mini">dimanche 🧡</div>
+      </div>
+      <div class="tile" data-post="7">
+        <div class="ph" data-label="post.jpg"><img src="assets/post-6.jpg" alt="post" onerror="this.classList.add('failed')"></div>
+        <div class="cap-mini">entre copines ✨</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bandeau latéral : Infos récoltées -->
+  <aside class="osint-panel">
+    <h3>Infos récoltées</h3>
+    <ul>
+      <li data-step="1"><span class="k">Naissance</span><span class="v">{{annee}} · {{anniv}}</span></li>
+      <li data-step="2"><span class="k">Animal</span><span class="v">{{chien}}</span></li>
+      <li data-step="3"><span class="k">Sport/club</span><span class="v">{{sport}} · {{club}}</span></li>
+      <li data-step="3"><span class="k">Ville</span><span class="v">{{ville}}</span></li>
+      <li data-step="4"><span class="k">Localisation</span><span class="v">bâtiment + n° visibles</span></li>
+      <li data-step="5"><span class="k">Absence</span><span class="v">vacances à {{mamie_ville}}</span></li>
+    </ul>
+  </aside>
+
+  <!-- Label flottant de la miette courante -->
+  <div class="crumb-label" id="crumbLabel" style="display:none;"></div>
+</div>
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <span class="lb-close" id="lbClose" title="Fermer">×</span>
+  <div class="lb-card">
+    <div class="lb-img"><div class="ph" id="lbPh" data-label="post"><img id="lbImg" src="" alt="post agrandi" onerror="this.classList.add('failed')"></div></div>
+    <div class="lb-side">
+      <div class="u"><span class="dot"></span>{{pseudo}}</div>
+      <div class="lb-caption" id="lbCap"></div>
+      <div class="lb-date" id="lbDate"></div>
+      <div class="lb-hint">Clic en dehors ou × pour fermer — vue agrandie, purement statique.</div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = { labelDelayMs: 120 };
+
+/* Légendes figées pour la vue agrandie (aucune donnée dynamique) */
+const CAPTIONS = {
+  "1": "15 ans aujourd'hui 🎂 — déjà le " + SARAH.anniv + " ! Merci pour tous vos messages 🥳",
+  "2": "mon " + SARAH.chien + " d'amour 🐶 il me manque quand je suis en cours",
+  "3": "fière de mon club 💪 " + SARAH.club + " — on lâche rien",
+  "4": "après l'entraînement 🚶‍♀️ (petite photo devant chez moi)",
+  "5": "enfin les vacances chez mamie à " + SARAH.mamie_ville + " ☀️ 10 jours loin de " + SARAH.ville + " !",
+  "6": "dimanche tranquille 🧡",
+  "7": "entre copines ✨"
+};
+
+/* Dates des posts. La date de l'anniv découle de l'année de naissance (ex: 2009 + 15 = 2024). */
+const ANNIV_ANNEE = parseInt(SARAH.annee, 10) + 15;
+const DATES = {
+  "1": SARAH.anniv + " " + ANNIV_ANNEE,
+  "2": "9 février " + ANNIV_ANNEE,
+  "3": "2 décembre " + (ANNIV_ANNEE - 1),
+  "4": "15 mai " + ANNIV_ANNEE,
+  "6": "21 avril " + ANNIV_ANNEE,
+  "7": "7 juin " + ANNIV_ANNEE
+};
+
+/* Labels de miette (flèche) par temps, positionnés près du post courant */
+const CRUMB_LABELS = {
+  1: "→ " + SARAH.anniv + " " + ANNIV_ANNEE + " − « 15 ans » = né·e en " + SARAH.annee,
+  2: "→ nom de l'animal : " + SARAH.chien,
+  3: "→ sport + club + ville",
+  4: "→ localisation : bâtiment + n° de rue",
+  5: "→ absence du domicile + lieu : " + SARAH.mamie_ville
+};
+
+function placeLabel(cur) {
+  const label = document.getElementById("crumbLabel");
+  if (!cur || !CRUMB_LABELS[cur]) { label.style.display = "none"; return; }
+  const mark = document.querySelector('.crumb-mark[data-step="' + cur + '"]');
+  if (!mark) { label.style.display = "none"; return; }
+  label.textContent = CRUMB_LABELS[cur];
+  label.style.display = "block";
+  // position sous l'élément surligné
+  const r = mark.getBoundingClientRect();
+  label.style.left = Math.min(window.innerWidth - label.offsetWidth - 20, r.left) + "px";
+  label.style.top = (r.bottom + 10) + "px";
+}
+
+Regie.init({
+  total: 5,
+  name: "profil",
+  onStep: function (cur) {
+    // Surlignage de la miette du post COURANT uniquement
+    document.querySelectorAll(".crumb-mark").forEach(function (m) {
+      m.classList.toggle("on", parseInt(m.dataset.step, 10) === cur);
+    });
+    // Accumulation dans le bandeau latéral
+    document.querySelectorAll(".osint-panel li[data-step]").forEach(function (li) {
+      li.classList.toggle("on", parseInt(li.dataset.step, 10) <= cur);
+    });
+    // Label flottant après un court délai pour laisser l'anim du cadre démarrer
+    setTimeout(function () { placeLabel(cur); }, TIMINGS.labelDelayMs);
+  }
+});
+
+/* --- Lightbox (interaction libre, sans effet sur la régie) --- */
+const lb = document.getElementById("lightbox");
+function openLB(post) {
+  const img = document.getElementById("lbImg");
+  const ph = document.getElementById("lbPh");
+  const names = {1:"post-anniv.jpg",2:"post-chien.jpg",3:"post-maillot.jpg",4:"post-rue.jpg",5:"story-vacances.jpg",6:"post-5.jpg",7:"post-6.jpg"};
+  img.classList.remove("failed");
+  ph.setAttribute("data-label", names[post] || "post");
+  img.src = "assets/" + (names[post] || "post-5.jpg");
+  document.getElementById("lbCap").textContent = CAPTIONS[post] || "";
+  document.getElementById("lbDate").textContent = DATES[post] ? ("📅 Publié le " + DATES[post]) : "";
+  lb.classList.add("on");
+}
+
+/* Badge de date sur chaque post de la grille */
+document.querySelectorAll(".grid .tile[data-post]").forEach(function (t) {
+  const d = document.createElement("div");
+  d.className = "tile-date";
+  d.textContent = "📅 " + (DATES[t.dataset.post] || "");
+  t.appendChild(d);
+});
+document.querySelectorAll(".tile[data-post], .hl[data-post]").forEach(function (t) {
+  t.addEventListener("click", function () { openLB(t.dataset.post); });
+});
+document.getElementById("lbClose").addEventListener("click", function () { lb.classList.remove("on"); });
+lb.addEventListener("click", function (e) { if (e.target === lb) lb.classList.remove("on"); });
+
+window.addEventListener("resize", function () { placeLabel(Regie.current); });
+</script>
+</body>
+</html>

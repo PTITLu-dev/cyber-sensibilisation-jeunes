@@ -1,0 +1,168 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!-- Reconstitution de la Wayback Machine (archive.org). Interface imitée, données FICTIVES,
+     aucune vraie requête réseau : on illustre qu'une page publique reste archivée dans le temps. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6b — Internet n'oublie pas</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .arch { flex:1; min-height:0; display:flex; flex-direction:column; gap:18px; }
+  .arch h1 { font-size:42px; line-height:1.12; max-width:34ch; }
+  .arch .cols { flex:1; min-height:0; display:grid; grid-template-columns:1.05fr 1fr; gap:36px; align-items:stretch; }
+
+  /* --- Wayback Machine --- */
+  .wb { background:#12161c; border:1px solid #2a333f; border-radius:16px; overflow:hidden; display:flex; flex-direction:column;
+        opacity:0; transform:translateY(14px); transition:opacity .5s, transform .5s; }
+  .wb.on { opacity:1; transform:none; }
+  .wb-top { background:#0b0e13; border-bottom:1px solid #2a333f; padding:16px 22px; display:flex; align-items:center; gap:16px; }
+  .wb-logo { display:flex; flex-direction:column; line-height:1.05; } .wb-logo .a { font-size:14px; color:#9fb3c8; letter-spacing:.12em; } .wb-logo .b { font-size:23px; font-weight:800; color:#fff; }
+  .wb-url { flex:1; background:#1b222b; border:1px solid #2a333f; border-radius:8px; padding:12px 16px; font-family:var(--sys-mono); font-size:19px; color:#cfe0f0; }
+  .wb-body { padding:26px; display:flex; flex-direction:column; gap:26px; flex:1; justify-content:center; }
+  .wb-saved { font-size:23px; color:var(--ink); text-align:center; } .wb-saved b { color:#4bb3fd; }
+
+  /* timeline de captures */
+  .tl { position:relative; margin:10px 20px 40px; }
+  .tl .line { height:4px; background:#2a3a4a; border-radius:2px; }
+  .tl .years { display:flex; justify-content:space-between; margin-top:14px; font-size:16px; color:#9fb3c8; }
+  .tl .snap { position:absolute; top:-9px; width:22px; height:22px; margin-left:-11px; border-radius:50%;
+              background:#2a6a9e; border:2px solid #12161c; cursor:pointer; }
+  .tl .snap.pick { background:#4bb3fd; box-shadow:0 0 0 6px rgba(75,179,253,.25); }
+  .tl .snap .tag { position:absolute; bottom:28px; left:50%; transform:translateX(-50%); white-space:nowrap;
+                   font-size:15px; color:#cfe0f0; background:#1b222b; border:1px solid #2a333f; border-radius:6px; padding:3px 9px; opacity:0; transition:opacity .3s; }
+  .tl .snap.pick .tag { opacity:1; }
+  /* pointeur + onde de clic */
+  .tl .ptr { position:absolute; top:4px; margin-left:-3px; z-index:5; pointer-events:none; opacity:0; transition:left .45s cubic-bezier(.4,.1,.2,1), opacity .3s; filter:drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+  .tl .ptr.on { opacity:1; }
+  .tl .rip { position:absolute; top:0; margin-left:-13px; width:26px; height:26px; border-radius:50%; border:3px solid #4bb3fd; opacity:0; pointer-events:none; }
+  .tl .rip.go { animation:rip .55s ease-out; }
+  @keyframes rip { 0%{opacity:.9;transform:scale(.4)} 100%{opacity:0;transform:scale(2.6)} }
+
+  /* --- Mini profil (change selon la capture) --- */
+  .snapview { background:var(--panel); border:1px solid var(--line); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
+  .sv-tab { padding:13px 20px; font-size:18px; font-weight:700; border-bottom:1px solid var(--line); }
+  .sv-tab.today { color:var(--ink-soft); } .sv-tab.pub { color:#4bb3fd; }
+  .mp { flex:1; min-height:0; padding:22px; display:flex; flex-direction:column; }
+  .mp-head { display:flex; align-items:center; gap:18px; margin-bottom:16px; }
+  .mp-av { width:72px; height:72px; border-radius:50%; background:linear-gradient(135deg,#444,#2a2a2a); flex:none; }
+  .mp-u { font-size:22px; } .mp-u b { font-weight:600; }
+  .mp-stats { font-size:17px; color:var(--ink-soft); margin-top:4px; }
+  .mp-grid { flex:1; min-height:0; display:grid; grid-template-columns:repeat(3,1fr); gap:6px; align-content:start; }
+  .mp-grid .ph { width:100%; aspect-ratio:1/1; }
+  .mp-grid .ph img { width:100%; height:100%; object-fit:cover; display:block; border-radius:3px; }
+  .mp-grid .ph img.failed { display:none; }
+  .mp-private { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; }
+  .mp-private .big { font-size:64px; } .mp-private .t { font-size:24px; font-weight:700; margin-top:10px; } .mp-private .s { font-size:17px; color:var(--ink-dim); margin-top:6px; }
+
+  .teach { background:var(--panel); border:1px solid var(--line); border-left:6px solid #4bb3fd; border-radius:14px; padding:16px 24px; font-size:23px; line-height:1.4;
+           opacity:0; transform:translateY(10px); transition:opacity .5s, transform .5s; } .teach.on { opacity:1; transform:none; } .teach b { color:#4bb3fd; }
+  .concl { font-size:29px; font-weight:800; opacity:0; transform:translateY(10px); transition:opacity .5s, transform .5s; } .concl.on { opacity:1; transform:none; } .concl b { color:var(--crumb); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="arch">
+    <div>
+      <div class="kicker">On rembobine — la limite du « compte privé »</div>
+      <h1>« C'est privé maintenant »… mais Internet a tout gardé</h1>
+    </div>
+
+    <div class="cols">
+      <!-- Wayback Machine -->
+      <div class="wb" id="wb">
+        <div class="wb-top">
+          <div class="wb-logo"><span class="a">INTERNET ARCHIVE</span><span class="b">WayBack Machine</span></div>
+          <div class="wb-url">https://instagram.com/sarah_m2009</div>
+        </div>
+        <div class="wb-body">
+          <div class="wb-saved">📸 Page <b>enregistrée 7 fois</b> entre mars 2024 et janvier 2025</div>
+          <div class="tl" id="tl">
+            <div class="line"></div>
+            <!-- snaps positionnés en % -->
+            <div class="snap" style="left:8%"></div>
+            <div class="snap" id="snapOld" style="left:24%"><span class="tag">3 mars 2024</span></div>
+            <div class="snap" style="left:42%"></div>
+            <div class="snap" style="left:58%"></div>
+            <div class="snap" style="left:74%"></div>
+            <div class="snap" id="snapNew" style="left:90%"><span class="tag">2 janvier 2025</span></div>
+            <div class="rip" id="rip"></div>
+            <svg class="ptr" id="ptr" width="30" height="30" viewBox="0 0 24 24"><path d="M4 2 L4 20 L8.5 15.5 L11.5 22 L14.5 20.8 L11.5 14.3 L18 14.3 Z" fill="#fff" stroke="#111" stroke-width="1.3" stroke-linejoin="round"/></svg>
+            <div class="years"><span>2024</span><span>2025</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mini profil (état selon capture) -->
+      <div class="snapview">
+        <div class="sv-tab today" id="svtab">🔒 Aujourd'hui — compte privé</div>
+        <div class="mp" id="mp">
+          <div class="mp-private" id="mpPrivate"><div class="big">🔒</div><div class="t">Ce compte est privé.</div><div class="s">Impossible de voir ses publications… aujourd'hui.</div></div>
+          <div id="mpPublic" style="display:none; flex:1; min-height:0; flex-direction:column;">
+            <div class="mp-head"><div class="mp-av"></div><div><div class="mp-u"><b>sarah_m2009</b></div><div class="mp-stats" id="mpStats">34 publications · 412 abonnés</div></div></div>
+            <div class="mp-grid" id="mpGrid"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="teach" id="teach">
+      Le compte est privé <b>aujourd'hui</b>. Mais on peut <b>remonter le temps</b> : chaque capture publique
+      reste consultable, pour toujours. (Idem : cache des moteurs, captures faites par d'autres.)
+    </div>
+    <div class="concl" id="concl">→ Ce qu'on publie peut rester <b>pour toujours</b>. On réfléchit avant, et on passe en privé <b>le plus tôt possible</b>.</div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+const POSTS = ["post-anniv.jpg","post-chien.jpg","post-maillot.jpg","post-rue.jpg","post-5.jpg","post-6.jpg"];
+
+function renderGrid(list){
+  var g = document.getElementById("mpGrid"); g.innerHTML = "";
+  list.forEach(function(src){
+    var d=document.createElement("div"); d.className="ph";
+    d.innerHTML='<img src="assets/'+src+'" alt="" onerror="this.classList.add(\'failed\')">';
+    g.appendChild(d);
+  });
+}
+function setProfile(state){
+  var priv=document.getElementById("mpPrivate"), pub=document.getElementById("mpPublic"), tab=document.getElementById("svtab");
+  if (state==="private"){ priv.style.display="flex"; pub.style.display="none"; tab.className="sv-tab today"; tab.textContent="🔒 Aujourd'hui — compte privé"; return; }
+  priv.style.display="none"; pub.style.display="flex";
+  tab.className="sv-tab pub";
+  if (state==="new"){ tab.textContent="🕰️ Capture du 2 janvier 2025 — compte PUBLIC"; document.getElementById("mpStats").textContent="34 publications · 412 abonnés"; renderGrid(POSTS); }
+  // on remonte : les posts RÉCENTS (en haut) n'existaient pas encore → il ne reste que les plus ANCIENS (du bas)
+  else { tab.textContent="🕰️ Capture du 3 mars 2024 — compte PUBLIC (plus ancien)"; document.getElementById("mpStats").textContent="9 publications · 180 abonnés"; renderGrid(POSTS.slice(3)); }
+}
+function clickDot(dot){
+  var tl=document.getElementById("tl"), ptr=document.getElementById("ptr"), rip=document.getElementById("rip");
+  document.querySelectorAll(".tl .snap").forEach(function(s){ s.classList.remove("pick"); });
+  dot.classList.add("pick");
+  var x = dot.offsetLeft;  // position dans la timeline
+  ptr.style.left = x+"px"; ptr.classList.add("on");
+  rip.style.left = x+"px"; rip.classList.remove("go"); void rip.offsetWidth; rip.classList.add("go");
+}
+
+Regie.init({
+  total: 6,
+  name: "archive",
+  onStep: function(cur, prev){
+    document.getElementById("wb").classList.toggle("on", cur >= 2);
+
+    if (cur <= 1){ setProfile("private"); document.querySelectorAll(".tl .snap").forEach(function(s){s.classList.remove("pick");}); document.getElementById("ptr").classList.remove("on"); }
+    else if (cur === 2){ setProfile("private"); }
+    else if (cur === 3){ setProfile("new"); clickDot(document.getElementById("snapNew")); }
+    else if (cur >= 4){ setProfile("old"); clickDot(document.getElementById("snapOld")); }
+
+    document.getElementById("teach").classList.toggle("on", cur >= 5);
+    document.getElementById("concl").classList.toggle("on", cur >= 6);
+  }
+});
+</script>
+</body>
+</html>

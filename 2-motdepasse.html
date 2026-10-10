@@ -1,0 +1,237 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!-- Reconstitution VISUELLE d'un outil type "cupp". 100% SCÉNARISÉ :
+     - les "réponses" tapées sont une animation machine à écrire de chaînes FIGÉES (aucune saisie lue) ;
+     - le DÉFILEMENT est un effet visuel : un petit POOL FIGÉ qui boucle, ~25 lignes à l'écran au plus ;
+     - le total "9473" est cosmétique (animation d'entier) ;
+     - AUCUN dictionnaire n'est réellement généré, combiné, ni enregistré. Aucun fichier écrit. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>2 — Des infos au mot de passe</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .wrap2 { flex:1; display:flex; flex-direction:column; min-height:0; gap:16px; }
+  .wrap2 .top { display:flex; align-items:baseline; gap:18px; }
+  .wrap2 h1 { font-size:var(--fs-h1); }
+  .wrap2 .sub { color:var(--ink-soft); font-size:var(--fs-small); }
+
+  .term { position:relative; flex:1; min-height:0; background:#0c0c12; border:1px solid #2a2a35; border-radius:12px;
+          display:flex; flex-direction:column; overflow:hidden; box-shadow:var(--shadow); }
+  .term-bar { display:flex; align-items:center; gap:9px; padding:13px 18px; background:#191922; border-bottom:1px solid #2a2a35; }
+  .term-bar .dot { width:14px; height:14px; border-radius:50%; }
+  .dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+  .term-bar .ttl { margin-left:14px; color:#9aa0a6; font:600 16px/1 var(--sys-mono); }
+
+  .term-body { flex:1; min-height:0; overflow:hidden; padding:20px 26px;
+               font-family:var(--sys-mono); font-size:22px; line-height:1.5; color:#d6d6e0; }
+  .entry { white-space:pre-wrap; }
+  .pr-user{color:#5be36b}.cmd{color:#eaeaf0}.ok{color:#56d364}.dim{color:#7d8590}
+  .q{color:#79c0ff}.ans{color:#ffd166}.banner{color:#c4b5fd}
+  .word{color:#c9c9d6}.hot{color:#c4b5fd;font-weight:700}
+  .fnote{color:#c4b5fd;font-weight:700}
+  .cursor{display:inline-block;width:11px;height:22px;background:#5be36b;vertical-align:-4px;margin-left:2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* défilement du dictionnaire */
+  .genstatus { font-size:24px; }
+  .genstatus .n { color:#c4b5fd; font-weight:800; }
+
+  /* verdict : grand panneau à droite, PAR-DESSUS le terminal (lisible en projection) */
+  .verdict { position:absolute; top:0; right:0; bottom:0; width:46%;
+             background:rgba(8,8,14,.94); border-left:4px solid var(--crumb);
+             display:flex; align-items:center; padding:0 52px; box-shadow:-24px 0 48px rgba(0,0,0,.5);
+             opacity:0; transform:translateX(24px); transition:opacity .5s, transform .5s; pointer-events:none; }
+  .verdict.on { opacity:1; transform:none; }
+  .verdict .v1 { font-size:46px; font-weight:800; line-height:1.15; margin-bottom:26px; color:#fff; }
+  .verdict .v1 b { color:var(--crumb); }
+  .verdict .v2 { font-size:30px; color:#d6d6e0; line-height:1.45; }
+  .verdict .v2 b { color:var(--crumb); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="wrap2">
+    <div class="top">
+      <h1>Des infos au mot de passe</h1>
+      <span class="sub">reconstitution d'un profilage type <b>cupp</b> — scénarisée, hors ligne</span>
+    </div>
+
+    <div class="term">
+      <div class="term-bar">
+        <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+        <span class="ttl">attaquant@kali: ~/cupp</span>
+      </div>
+      <div class="term-body" id="term"></div>
+      <div class="verdict" id="verdict">
+        <div>
+          <div class="v1">On n'a rien « piraté »<br>— on a <b>profilé</b>.</div>
+          <div class="v2">Le mot de passe de Sarah est<br><b>probablement dans ce fichier</b>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = { typeMs: 55, streamMs: 28, genDurMs: 4800, target: 9473 };
+
+const BANNER =
+" ___________ \n" +
+"    cupp.py!                 # Common\n" +
+"       \\                     # User\n" +
+"        \\   ,__,             # Passwords\n" +
+"         \\  (oo)____         # Profiler\n" +
+"            (__)    )\\ \n" +
+"               ||--|| *      [ reconstitution pédagogique — FICTIF ]\n";
+
+/* POOL FIGÉ (~50 entrées) propre au personnage fictif. Sert au DÉFILEMENT (bouclé).
+   Rien n'est généré ni stocké : ~25 lignes au plus existent à l'écran, puis sont retirées. */
+const POOL = [
+  "Nala2009","nala13","Sarah2009","sarah2009!","Nala2009!","HandNala","HBCValence","hbcvalence26",
+  "Sarah14mars","14032009","Nala14","SarahM2009","nala_valence","Sarah_hb","Valence2009","HandSarah",
+  "nala2009nala","sarahm2009","Sarah!2009","Nala2009#","handball2009","SarahValence","Nala2009HBC",
+  "nalanala","Sarah09","mars2009","Nala2009!!","sarah_m2009","Nala-2009","HBCVnala09","Nala2009*",
+  "sarah2009#","Valence26","nala2009!","Sarah_2009","HBC2009","handNala09","nala.2009","Sarah14",
+  "Nala09!","valence2009!","sarahhb","2009nala","NalaHBC","Sarah!14","handballV","Nala2009$","sarah09!",
+  "Valence_09","NalaSarah","hbc_valence"
+];
+
+const SCRIPT = [
+  { intro:true },
+  { q:"> First Name:",  a:"Sarah" },
+  { q:"> Surname:",     a:"M" },
+  { q:"> Nickname:",    a:"sarahm" },
+  { q:"> Birthdate (DDMMYYYY):", a:"14032009" },
+  { q:"> Pet's name:",  a:"Nala" },
+  { q:"> Company name:", a:"HBCValence" },
+  { q:"> Do you want to add some keywords about the victim? Y/[N]:", a:"Y",
+    extra:'\n<span class="q">> Please enter the words, separated by comma.</span> <span class="ans">handball,valence,nala</span>' },
+  { q:"> Do you want to add special chars at the end of words? Y/[N]:", a:"Y" },
+  { q:"> Add some random numbers at the end of words? Y/[N]:", a:"Y" },
+  { q:"> Leet mode? (i.e. leet = 1337) Y/[N]:", a:"N" },
+  { gen:true }
+];
+const TOTAL = SCRIPT.length;
+
+const term = document.getElementById("term");
+let timers = [], rafId = null;
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; if (rafId){ cancelAnimationFrame(rafId); rafId = null; } }
+function scrollBottom(){ term.scrollTop = term.scrollHeight; }
+
+function introHTML(){
+  return '<div class="entry">'
+    + '<span class="pr-user">┌──(attaquant㉺kali)-[~]</span>\n'
+    + '<span class="pr-user">└─$</span> <span class="cmd">python3 cupp.py -i</span>\n\n'
+    + '<span class="banner">' + BANNER + '</span>\n'
+    + '<span class="ok">[+] Insert the information about the victim to make a dictionary</span>\n'
+    + '<span class="dim">[+] If you don\'t know all the info, just hit enter when asked! ;)</span>\n</div>';
+}
+function qaHTML(e){
+  return '<div class="entry"><span class="q">' + e.q + '</span> <span class="ans">' + (e.a||"") + '</span>' + (e.extra||"") + '</div>';
+}
+/* rend les entrées 0..n-1 (intro + questions) */
+function renderUpTo(n){
+  var html = "";
+  for (var i = 0; i < n; i++){ var e = SCRIPT[i]; html += e.intro ? introHTML() : (e.gen ? "" : qaHTML(e)); }
+  term.innerHTML = html;
+}
+
+function typeInto(el, text, done){
+  el.textContent = ""; var i = 0;
+  (function tick(){ el.textContent = text.slice(0,i); scrollBottom();
+    if (i < text.length){ i++; timers.push(setTimeout(tick, TIMINGS.typeMs)); } else if (done) done(); })();
+}
+
+function easeOut(p){ return 1 - Math.pow(1 - p, 2); }
+
+/* DÉFILEMENT : flux de mots (pool figé bouclé) + compteur qui grimpe, puis on fige. */
+function runGeneration(){
+  term.insertAdjacentHTML("beforeend", '<div class="entry"><span class="ok">[+] Génération du dictionnaire à partir du profil…</span></div>');
+  var stream = document.createElement("div"); stream.className = "entry"; term.appendChild(stream);
+  var status = document.createElement("div"); status.className = "entry genstatus"; term.appendChild(status);
+
+  function addLine(){
+    var w = POOL[Math.floor(Math.random() * POOL.length)];
+    var d = document.createElement("div");
+    d.className = /^nala2009$/i.test(w) ? "hot" : "word";
+    d.textContent = w;
+    stream.appendChild(d);
+    while (stream.childNodes.length > 24) stream.removeChild(stream.firstChild);  // cap : rien n'est stocké
+    scrollBottom();
+    timers.push(setTimeout(addLine, TIMINGS.streamMs));
+  }
+  addLine();
+
+  var t0 = performance.now();
+  (function tick(now){
+    var p = Math.min(1, (now - t0) / TIMINGS.genDurMs);
+    var c = Math.round(easeOut(p) * TIMINGS.target);
+    status.innerHTML = '<span class="dim">génération…</span> <span class="n">' + c.toLocaleString("fr-FR") + '</span> <span class="dim">mots</span>';
+    if (p < 1){ rafId = requestAnimationFrame(tick); }
+    else { finishGeneration(stream, status); }
+  })(performance.now());
+}
+function finishGeneration(stream, status){
+  clearTimers();
+  status.innerHTML = '<span class="ok">[+] Dictionnaire enregistré : <b>sarah.txt</b> — <b>9 473 mots.</b></span>';
+  term.insertAdjacentHTML("beforeend",
+    '<div class="entry">\n<span class="ok">[+] Prêt à tester sur son compte. 😏</span>\n'
+    + '<span class="fnote"># → le mot de passe de Sarah est probablement là-dedans.</span>\n</div>');
+  scrollBottom();
+  document.getElementById("verdict").classList.add("on");
+}
+/* état figé de la génération (pour recul / saut, sans animation) */
+function renderGenerationStatic(){
+  var sample = POOL.slice(0, 20).map(function(w){ return '<span class="' + (/^nala2009$/i.test(w)?"hot":"word") + '">' + w + '</span>'; }).join("\n");
+  term.insertAdjacentHTML("beforeend",
+    '<div class="entry"><span class="ok">[+] Génération du dictionnaire à partir du profil…</span>\n' + sample
+    + '\n<span class="dim">… (9 473 mots)</span>\n'
+    + '<span class="ok">[+] Dictionnaire enregistré : <b>sarah.txt</b> — <b>9 473 mots.</b></span>\n'
+    + '<span class="fnote"># → le mot de passe de Sarah est probablement là-dedans.</span>\n</div>');
+  scrollBottom();
+}
+
+Regie.init({
+  total: TOTAL,
+  name: "cupp",
+  onStep: function(cur, prev){
+    clearTimers();
+    var e = SCRIPT[cur - 1];
+    var forward = (cur === prev + 1);
+    document.getElementById("verdict").classList.remove("on");
+
+    if (cur === 0){ term.innerHTML = ""; scrollBottom(); return; }
+
+    // question tapée (machine à écrire) en avançant
+    if (forward && e && e.q && e.a){
+      renderUpTo(cur - 1);
+      var node = document.createElement("div"); node.className = "entry";
+      node.innerHTML = '<span class="q">' + e.q + '</span> <span class="ans" id="typing"></span><span class="cursor"></span>';
+      term.appendChild(node); scrollBottom();
+      typeInto(document.getElementById("typing"), e.a, function(){
+        if (e.extra){ var ex = document.createElement("span"); ex.innerHTML = e.extra; node.insertBefore(ex, node.querySelector(".cursor")); scrollBottom(); }
+      });
+      return;
+    }
+
+    // étape de génération (défilement)
+    if (e && e.gen){
+      renderUpTo(cur - 1);
+      if (forward) runGeneration();
+      else { renderGenerationStatic(); document.getElementById("verdict").classList.add("on"); }
+      return;
+    }
+
+    // autres cas : rendu figé
+    renderUpTo(cur);
+    scrollBottom();
+  }
+});
+</script>
+</body>
+</html>

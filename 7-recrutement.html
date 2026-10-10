@@ -1,0 +1,127 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!-- Niveau SIGNAL + prévention uniquement. Aucun détail opérationnel sur "comment on recrute". -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>7 — Signaux d'alerte</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .recr { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .recr h1 { font-size:46px; max-width:30ch; line-height:1.12; margin-bottom:6px; }
+
+  /* parcours ① → ② → ③ */
+  .flow { display:flex; align-items:center; gap:16px; margin:16px 0 22px; }
+  .fstep { display:flex; align-items:center; gap:12px; background:var(--panel); border:1px solid var(--line);
+           border-radius:999px; padding:9px 22px; font-size:21px; font-weight:600; color:var(--ink-soft);
+           opacity:.45; transition:opacity .35s, border-color .35s, color .35s; }
+  .fstep.on { opacity:1; border-color:var(--c); color:#fff; }
+  .fstep .n { width:34px; height:34px; border-radius:50%; background:var(--c); color:#0b0e13;
+              display:flex; align-items:center; justify-content:center; font-weight:800; font-size:19px; }
+  .farrow { color:var(--ink-dim); font-size:26px; }
+  .fstep.s1 { --c:#e0a458; } .fstep.s2 { --c:#a78bfa; } .fstep.s3 { --c:#2ec27e; }
+
+  .cols { flex:1; min-height:0; display:grid; grid-template-columns:repeat(3,1fr); gap:28px; }
+  .scol { position:relative; background:var(--panel); border:1px solid var(--line); border-radius:16px;
+          padding:30px 30px 24px; overflow:hidden; opacity:0; transform:translateY(16px);
+          transition:opacity .5s, transform .5s; }
+  .scol.on { opacity:1; transform:none; }
+  .scol .acc { position:absolute; top:0; left:0; right:0; height:5px; background:var(--c); }
+  .scol.approach { --c:#e0a458; } .scol.signs { --c:#a78bfa; } .scol.action { --c:#2ec27e; }
+  .shd { display:flex; align-items:center; gap:14px; margin-bottom:20px; }
+  .shd .ic { font-size:40px; }
+  .shd h2 { font-size:29px; color:var(--c); }
+  .scol ul { list-style:none; display:flex; flex-direction:column; gap:15px; }
+  .scol li { display:flex; gap:13px; font-size:21px; color:var(--ink-soft); line-height:1.38; }
+  .scol li .bi { flex:none; font-size:22px; width:28px; text-align:center; }
+  .scol li b { color:var(--ink); }
+
+  .foot { margin-top:22px; background:var(--panel-2); border:1px solid var(--line); border-left:6px solid var(--ok);
+          border-radius:14px; padding:18px 28px; font-size:24px; display:flex; align-items:center; gap:20px; flex-wrap:wrap;
+          opacity:0; transform:translateY(10px); transition:opacity .5s, transform .5s; }
+  .foot.on { opacity:1; transform:none; }
+  .foot .lead { font-weight:800; color:#fff; }
+  .foot .res { color:var(--ink-soft); }
+  .foot .res b { color:var(--ok); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="recr">
+    <div class="kicker">Quand ce n'est plus un compte qu'on vole</div>
+    <h1>Quand ce n'est plus un compte qu'on vole, mais un jeune qu'on approche</h1>
+
+    <div class="flow">
+      <div class="fstep s1" data-step="1"><span class="n">1</span>L'approche</div>
+      <span class="farrow">→</span>
+      <div class="fstep s2" data-step="2"><span class="n">2</span>Les signes</div>
+      <span class="farrow">→</span>
+      <div class="fstep s3" data-step="3"><span class="n">3</span>L'action</div>
+    </div>
+
+    <div class="cols">
+      <div class="scol approach" data-step="1">
+        <div class="acc"></div>
+        <div class="shd"><span class="ic">🪝</span><h2>La forme de l'approche</h2></div>
+        <ul>
+          <li><span class="bi">⚡</span>Gentillesse très rapide, intérêt intense dès le début.</li>
+          <li><span class="bi">💬</span>Intimité installée trop vite (« toi seul·e me comprends »).</li>
+          <li><span class="bi">↗️</span>« Parlons ailleurs », sur une autre appli plus discrète.</li>
+          <li><span class="bi">🎁</span>Cadeaux, argent, recharges, petits services.</li>
+          <li><span class="bi">🤫</span>« C'est notre secret » — mise à l'écart des adultes.</li>
+        </ul>
+      </div>
+
+      <div class="scol signs" data-step="2">
+        <div class="acc"></div>
+        <div class="shd"><span class="ic">🔎</span><h2>Côté éducateur·rice</h2></div>
+        <ul>
+          <li><span class="bi">🎁</span>Objet neuf inexpliqué (téléphone, vêtements, argent).</li>
+          <li><span class="bi">📱</span>Un 2ᵉ téléphone ou un 2ᵉ compte.</li>
+          <li><span class="bi">🌙</span>Repli, changement d'humeur, sommeil perturbé.</li>
+          <li><span class="bi">👥</span>Nouvelle « bande », souvent plus âgée.</li>
+          <li><span class="bi">🔒</span>Téléphone soudain secret, retourné, en silencieux.</li>
+        </ul>
+      </div>
+
+      <div class="scol action" data-step="3">
+        <div class="acc"></div>
+        <div class="shd"><span class="ic">🤝</span><h2>Quoi faire</h2></div>
+        <ul>
+          <li><span class="bi">👂</span><span><b>Ouvrir le dialogue sans juger</b> — écouter avant de réagir.</span></li>
+          <li><span class="bi">🚫</span><span><b>Ne pas punir ni confisquer</b> d'emblée : cela pousse au silence.</span></li>
+          <li><span class="bi">☎️</span><span>S'appuyer sur les relais : <b>119</b> et la <b>cellule ASE</b>.</span></li>
+          <li><span class="bi">📝</span><span>Documenter, <b>ne pas rester seul·e</b> face à la situation.</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot" data-step="3">
+      <span class="lead">⚠ Au moindre doute, on ne reste pas seul·e :</span>
+      <span class="res"><b>119</b> enfance en danger &nbsp;·&nbsp; <b>3018</b> violences numériques &nbsp;·&nbsp; <b>cellule ASE</b></span>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+Regie.init({
+  total: 3,
+  name: "recrutement",
+  onStep: function(cur){
+    document.querySelectorAll(".scol[data-step]").forEach(function(c){
+      c.classList.toggle("on", parseInt(c.dataset.step,10) <= cur);
+    });
+    document.querySelectorAll(".fstep[data-step]").forEach(function(f){
+      f.classList.toggle("on", parseInt(f.dataset.step,10) <= cur);
+    });
+    document.querySelector(".foot").classList.toggle("on", cur >= 3);
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!-- Page de login INERTE : AUCUN <input> mot de passe, rien n'est saisi, lu, stocké ni envoyé.
+     Les "essais" sont un tableau ORDONNÉ FIGÉ, affichés/animés. Aucune authentification réelle.
+     Le "✓ ACCÈS AUTORISÉ" est déclenché par une TOUCHE de l'opérateur, pas par une vérification. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>3 — Connexion (reconstitution inerte)</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .login-stage { flex:1; min-height:0; display:grid; grid-template-columns:480px 1fr; gap:48px; align-items:center; }
+
+  .login-card { width:420px; justify-self:center; background:#fff; color:#111; border:1px solid #dbdbdb; border-radius:6px;
+    padding:46px 40px 30px; display:flex; flex-direction:column; align-items:center; box-shadow:var(--shadow); }
+  .wordmark { font-family:"Snell Roundhand","Brush Script MT","Segoe Script",cursive; font-size:56px; margin-bottom:30px; color:#222; }
+  .fld { width:100%; background:#fafafa; border:1px solid #dbdbdb; border-radius:4px; padding:13px 11px; font-size:16px; margin-bottom:9px; color:#111; }
+  .pw-field { width:100%; min-height:46px; background:#fafafa; border:1px solid #dbdbdb; border-radius:4px;
+    padding:13px 11px; margin-bottom:9px; display:flex; align-items:center; letter-spacing:4px; color:#333; font-size:20px; }
+  .pw-field.bad { border-color:#e5484d; background:#fff0f0; animation:shake .35s; }
+  .pw-field.good { border-color:#2ec27e; background:#f0fff6; }
+  .pw-ph { color:#bbb; letter-spacing:normal; font-size:16px; }
+  @keyframes shake { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-8px)} 40%{transform:translateX(8px)} 60%{transform:translateX(-5px)} 80%{transform:translateX(5px)} }
+  .pw-msg { width:100%; min-height:20px; font-size:13px; margin:-2px 0 8px; }
+  .pw-msg.bad { color:#e5484d; } .pw-msg.good { color:#1a9d63; }
+  .btn-login { width:100%; background:#4cb5f9; color:#fff; border:none; border-radius:8px; padding:10px; font-size:16px; font-weight:600; margin-top:6px; cursor:default; }
+  .inert-note { font-size:12px; color:#8e8e8e; margin-top:18px; text-align:center; }
+
+  /* Terminal hydra */
+  .term { background:#0c0c12; border:1px solid #2a2a35; border-radius:12px; display:flex; flex-direction:column;
+          overflow:hidden; box-shadow:var(--shadow); height:760px; align-self:center; }
+  .term-bar { display:flex; align-items:center; gap:9px; padding:13px 18px; background:#191922; border-bottom:1px solid #2a2a35; }
+  .term-bar .dot{width:14px;height:14px;border-radius:50%}.dot.r{background:#ff5f56}.dot.y{background:#ffbd2e}.dot.g{background:#27c93f}
+  .term-bar .ttl{margin-left:14px;color:#9aa0a6;font:600 16px/1 var(--sys-mono)}
+  .term-body{flex:1;min-height:0;overflow:hidden;padding:20px 24px;font-family:var(--sys-mono);font-size:21px;line-height:1.5;color:#d6d6e0}
+  .ln{white-space:pre-wrap}
+  .pr-user{color:#5be36b}.cmd{color:#eaeaf0}.dim{color:#7d8590}.att{color:#c9c9d6}.fail{color:#e5484d}.succ{color:#56d364;font-weight:700}.pwc{color:#ffd166}
+  .cursor{display:inline-block;width:11px;height:21px;background:#5be36b;vertical-align:-4px;margin-left:2px;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  .speed-badge{position:fixed;top:14px;right:16px;z-index:9000;font:600 13px/1 var(--sys-mono);color:var(--ink-soft);
+    background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:6px;padding:7px 10px;opacity:0;transition:opacity .3s}
+  .speed-badge.on{opacity:1}
+
+  #granted{position:fixed;inset:0;z-index:8500;background:var(--ok-deep);display:none;align-items:center;justify-content:center;flex-direction:column;gap:20px}
+  #granted.on{display:flex;animation:pop .4s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+  #granted .check{font-size:150px;line-height:1}
+  #granted .txt{font-size:var(--fs-hero);font-weight:800;letter-spacing:.04em}
+  #granted .sub{font-size:var(--fs-body);opacity:.9}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="login-stage">
+    <!-- Carte de connexion : AUCUN input mot de passe, rien n'est lu -->
+    <div class="login-card" role="img" aria-label="Reconstitution d'un écran de connexion (inerte)">
+      <div class="wordmark">Instagram</div>
+      <div class="fld">sarah_m2009</div>
+      <div class="pw-field" id="pwField"><span class="pw-ph">Mot de passe</span></div>
+      <div class="pw-msg" id="pwMsg"></div>
+      <button class="btn-login" type="button" tabindex="-1">Se connecter</button>
+      <div class="inert-note">Reconstitution inerte — rien n'est saisi, lu, ni envoyé.<br>La démo avance au clavier (Espace).</div>
+    </div>
+
+    <!-- Terminal d'attaque (hydra) -->
+    <div class="term">
+      <div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="ttl">attaquant@kali: ~ — hydra</span></div>
+      <div class="term-body" id="term"></div>
+    </div>
+  </div>
+</div>
+
+<div class="speed-badge" id="speedBadge"></div>
+
+<div id="granted">
+  <div class="check">✓</div>
+  <div class="txt">ACCÈS AUTORISÉ</div>
+  <div class="sub">(déclenché par l'opérateur — aucune vérification réelle)</div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+/* Aucun champ mot de passe n'existe : impossible de capturer quoi que ce soit. */
+const TIMINGS = { typeMs: 70, autoMs: 850, autoMin:200, autoMax:2000 };
+
+/* Tableau ORDONNÉ FIGÉ. Aucune comparaison, aucune authentification réelle. */
+const ATTEMPTS = [
+  { pw:"nala13",       ok:false },
+  { pw:"Sarah07",      ok:false },
+  { pw:"HBCvalence",   ok:false },
+  { pw:"sarah2009!",   ok:false },
+  { pw:"handball2009", ok:false },
+  { pw:"Valence2009",  ok:false },
+  { pw:"Nala2009",     ok:true  }
+];
+const TOTAL = ATTEMPTS.length + 1;   // dernier temps = overlay
+
+const term = document.getElementById("term");
+const pwField = document.getElementById("pwField");
+const pwMsg = document.getElementById("pwMsg");
+let timers = [];
+function clearTimers(){ timers.forEach(clearTimeout); timers = []; }
+function scrollBottom(){ term.scrollTop = term.scrollHeight; }
+
+function cmdHTML(){
+  return '<div class="ln"><span class="pr-user">└─$</span> <span class="cmd">hydra -l sarah_m2009 -P sarah.txt instagram.com http-post</span></div>'
+    + '<div class="ln"><span class="dim">[DATA] attaque sur instagram.com — liste : sarah.txt (9473 mots)</span></div>';
+}
+function attemptLine(a){
+  if (a.ok) return '<div class="ln"><span class="succ">[SUCCESS]</span> login: <span class="pwc">sarah_m2009</span>  password: <span class="pwc">' + a.pw + '</span>  ✓</div>';
+  return '<div class="ln"><span class="att">[ATTEMPT]</span> l:"sarah_m2009" p:"<span class="pwc">' + a.pw + '</span>" <span class="fail">✗ incorrect</span></div>';
+}
+
+/* rendu statique du terminal jusqu'à l'essai idx (inclus) */
+function renderTerm(uptoAttempts){
+  var html = cmdHTML();
+  for (var i = 0; i < uptoAttempts; i++) html += attemptLine(ATTEMPTS[i]);
+  term.innerHTML = html;
+  scrollBottom();
+}
+/* champ mdp : affiche n points (état figé) */
+function showDots(n, state){
+  pwField.className = "pw-field" + (state ? " " + state : "");
+  pwField.textContent = n > 0 ? "●".repeat(n) : "";
+  if (n === 0) pwField.innerHTML = '<span class="pw-ph">Mot de passe</span>';
+}
+function typeDots(len, done){
+  var i = 0;
+  pwField.className = "pw-field"; pwField.textContent = "";
+  (function tick(){
+    pwField.textContent = "●".repeat(i);
+    if (i < len){ i++; timers.push(setTimeout(tick, TIMINGS.typeMs)); }
+    else if (done) done();
+  })();
+}
+
+/* --- mode auto --- */
+let autoTimer = null;
+function autoRunning(){ return autoTimer !== null; }
+function stopAuto(){ if (autoTimer){ clearInterval(autoTimer); autoTimer = null; } showSpeed(); }
+function startAuto(){ stopAuto(); autoTimer = setInterval(function(){ if (Regie.current >= TOTAL){ stopAuto(); return; } Regie.forward(); }, TIMINGS.autoMs); showSpeed(); }
+function showSpeed(){ var b=document.getElementById("speedBadge"); b.textContent = autoRunning() ? ("auto "+TIMINGS.autoMs+" ms  (+/- · A stop)") : "manuel  (A : auto)"; b.classList.add("on"); clearTimeout(showSpeed._t); showSpeed._t=setTimeout(function(){b.classList.remove("on")},1600); }
+
+Regie.init({
+  total: TOTAL,
+  name: "connexion",
+  onStep: function(cur, prev){
+    clearTimers();
+    document.getElementById("granted").classList.toggle("on", cur >= TOTAL);
+
+    if (cur === 0){ renderTerm(0); showDots(0); pwMsg.textContent=""; pwMsg.className="pw-msg"; return; }
+    if (cur >= TOTAL){ return; }  // overlay seulement
+
+    var a = ATTEMPTS[cur - 1];          // essai courant (cur 1..7)
+    var forward = (cur === prev + 1);
+
+    if (forward){
+      renderTerm(cur - 1);              // essais précédents
+      pwMsg.textContent = ""; pwMsg.className = "pw-msg";
+      typeDots(a.pw.length, function(){
+        // résultat après la frappe
+        term.insertAdjacentHTML("beforeend", attemptLine(a));
+        scrollBottom();
+        if (a.ok){ pwField.className = "pw-field good"; pwMsg.textContent = "✓ Connexion réussie"; pwMsg.className = "pw-msg good"; }
+        else { pwField.className = "pw-field bad"; pwMsg.textContent = "Mot de passe incorrect"; pwMsg.className = "pw-msg bad"; }
+      });
+    } else {
+      renderTerm(cur);                  // état figé jusqu'à l'essai courant
+      showDots(a.pw.length, a.ok ? "good" : "bad");
+      pwMsg.textContent = a.ok ? "✓ Connexion réussie" : "Mot de passe incorrect";
+      pwMsg.className = "pw-msg " + (a.ok ? "good" : "bad");
+    }
+  },
+  onKey: function(e){
+    if (e.key==="a"||e.key==="A"){ autoRunning()?stopAuto():startAuto(); }
+    else if (e.key==="+"||e.key==="="){ TIMINGS.autoMs=Math.max(TIMINGS.autoMin,TIMINGS.autoMs-100); autoRunning()?startAuto():showSpeed(); }
+    else if (e.key==="-"||e.key==="_"){ TIMINGS.autoMs=Math.min(TIMINGS.autoMax,TIMINGS.autoMs+100); autoRunning()?startAuto():showSpeed(); }
+  }
+});
+document.addEventListener("keydown", function(e){ if ((e.key==="r"||e.key==="R"||e.key==="ArrowLeft") && autoRunning()) stopAuto(); });
+</script>
+</body>
+</html>

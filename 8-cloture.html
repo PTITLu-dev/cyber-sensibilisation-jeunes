@@ -1,0 +1,86 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>8 — Clôture</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .close { flex:1; min-height:0; display:flex; flex-direction:column; justify-content:center; gap:34px; }
+
+  .rules { display:grid; grid-template-columns:repeat(2,1fr); gap:22px; }
+  .rule { display:flex; align-items:center; gap:22px; background:var(--panel); border:1px solid var(--line);
+          border-left:6px solid var(--ok); border-radius:16px; padding:24px 30px;
+          opacity:0; transform:translateY(14px); transition:opacity .5s, transform .5s; }
+  .rule.on { opacity:1; transform:none; }
+  .rule .chk { width:48px; height:48px; border-radius:50%; background:var(--ok); color:#06130c; flex:none;
+               display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; }
+  .rule .ic { font-size:40px; flex:none; }
+  .rule .t { font-size:31px; font-weight:700; }
+
+  .punch { font-size:54px; font-weight:800; line-height:1.18; max-width:24ch;
+           opacity:0; transform:translateY(14px); transition:opacity .6s, transform .6s; }
+  .punch.on { opacity:1; transform:none; }
+  .punch .soft { display:block; font-size:36px; font-weight:400; color:var(--ink-soft); margin-top:14px; }
+
+  .res-wrap { opacity:0; transform:translateY(14px); transition:opacity .6s, transform .6s; }
+  .res-wrap.on { opacity:1; transform:none; }
+  .res-wrap .kicker { margin-bottom:14px; }
+  .resources { display:flex; gap:22px; flex-wrap:wrap; }
+  .resource { background:var(--panel); border:1px solid var(--line); border-top:4px solid var(--accent-2);
+              border-radius:16px; padding:22px 30px; min-width:280px; }
+  .resource .num { font-size:50px; font-weight:800; color:var(--accent-2); line-height:1; }
+  .resource .desc { font-size:21px; color:var(--ink-soft); margin-top:10px; }
+  .credit { margin-top:8px; font-size:19px; color:var(--ink-dim); opacity:0; transition:opacity .6s; }
+  .credit.on { opacity:1; } .credit b { color:var(--accent-2); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="close">
+    <div>
+      <div class="kicker">Lundi matin — ce qu'on retient</div>
+      <div class="rules">
+        <div class="rule" data-step="1"><span class="chk">✓</span><span class="ic">🔒</span><span class="t">Compte privé</span></div>
+        <div class="rule" data-step="2"><span class="chk">✓</span><span class="ic">🧩</span><span class="t">Un mot de passe qui ne raconte rien</span></div>
+        <div class="rule" data-step="3"><span class="chk">✓</span><span class="ic">📲</span><span class="t">Double authentification (2FA) activée</span></div>
+        <div class="rule" data-step="4"><span class="chk">✓</span><span class="ic">🚫</span><span class="t">On n'installe / ne clique rien reçu en privé</span></div>
+      </div>
+    </div>
+
+    <div class="punch" data-step="5">
+      Sarah n'existe pas.
+      <span class="soft">Mais ce qu'on lui a fait, on le fait à de vrais jeunes tous les jours.</span>
+    </div>
+
+    <div class="res-wrap" data-step="6">
+      <div class="kicker">Vers qui se tourner</div>
+      <div class="resources">
+        <div class="resource"><div class="num">119</div><div class="desc">Enfance en danger — 24h/24, 7j/7, gratuit</div></div>
+        <div class="resource"><div class="num">3018</div><div class="desc">Violences numériques · Net Écoute</div></div>
+        <div class="resource"><div class="num" style="font-size:38px;">e-Enfance</div><div class="desc">Association — accompagnement &amp; ressources</div></div>
+      </div>
+    </div>
+
+    <div class="credit" data-step="6">Démo réalisée par <b>PTIT'Lu</b></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+Regie.init({
+  total: 6,
+  name: "cloture",
+  onStep: function (cur) {
+    document.querySelectorAll("[data-step]").forEach(function (el) {
+      el.classList.toggle("on", parseInt(el.dataset.step, 10) <= cur);
+    });
+  }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1b — Recherche (résultats fictifs)</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  /* Page de résultats de moteur de recherche — reconstitution pédagogique, grande et lisible. */
+  html, body { background:#fff; color:#202124; overflow:hidden; }
+  .stage { padding:40px 0 0; justify-content:flex-start; }
+
+  .serp-kicker { color:#6d28d9; font-size:24px; text-transform:uppercase; letter-spacing:.12em; margin:0 0 14px 160px; font-weight:700; }
+
+  .serp-head { display:flex; align-items:center; gap:44px; margin:0 0 0 160px; }
+  .wordmark { font-size:52px; font-weight:500; letter-spacing:-1px; line-height:1; font-family:Arial, var(--sys-ui); }
+  .wordmark .b{color:#4285F4}.wordmark .r{color:#EA4335}.wordmark .y{color:#FBBC05}.wordmark .g{color:#34A853}
+  .searchbox { display:flex; align-items:center; gap:18px; width:900px; border:1px solid #dfe1e5; border-radius:30px;
+               padding:16px 28px; box-shadow:0 1px 8px rgba(32,33,36,.16); }
+  .searchbox .q { flex:1; font-size:26px; color:#202124; }
+  .searchbox .mic { color:#4285F4; font-size:24px; } .searchbox .mag { color:#9aa0a6; font-size:24px; }
+
+  .tabs { display:flex; gap:36px; margin:26px 0 0 160px; border-bottom:1px solid #ebebeb; width:calc(100% - 320px); }
+  .tabs .tab { font-size:19px; color:#5f6368; padding:0 2px 14px; display:flex; align-items:center; gap:8px; }
+  .tabs .tab.active { color:#1a73e8; border-bottom:3px solid #1a73e8; font-weight:500; }
+
+  .serp-body { display:grid; grid-template-columns:minmax(0,900px) 480px; gap:70px; padding:14px 0 0 160px; }
+  .stats { grid-column:1 / 2; color:#70757a; font-size:18px; margin-bottom:16px; }
+
+  .results { grid-column:1 / 2; display:flex; flex-direction:column; gap:30px; }
+  .result { opacity:0; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease; max-width:880px; }
+  .result.on { opacity:1; transform:none; }
+  .result .crumbline { display:flex; align-items:center; gap:14px; margin-bottom:5px; }
+  .result .fav { width:38px; height:38px; border-radius:50%; background:#f1f3f4; display:flex; align-items:center; justify-content:center; font-size:19px; flex:none; }
+  .result .site { font-size:19px; color:#202124; line-height:1.2; }
+  .result .site .url { display:block; color:#5f6368; font-size:16px; }
+  .result .ttl { font-size:30px; line-height:1.3; color:#1a0dab; font-weight:400; margin:4px 0 6px; }
+  .result .snip { font-size:22px; color:#4d5156; line-height:1.55; }
+  .result .snip mark { background:#ede9fe; color:#5b21b6; padding:0 4px; border-radius:4px; font-weight:600; }
+  .result .note { font-size:19px; color:#6d28d9; margin-top:10px; display:flex; align-items:center; gap:9px; }
+  .result .note::before { content:"↳"; font-weight:700; }
+
+  .kpanel { grid-column:2 / 3; align-self:start; border:1px solid #dadce0; border-radius:16px; padding:28px 30px; box-shadow:0 1px 8px rgba(32,33,36,.1); }
+  .kpanel h3 { font-size:18px; text-transform:uppercase; letter-spacing:.08em; color:#5f6368; margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+  .kpanel h3::before { content:"📋"; }
+  .kpanel ul { list-style:none; display:flex; flex-direction:column; gap:18px; }
+  .kpanel li { display:flex; flex-direction:column; gap:2px; opacity:0; transform:translateX(8px); transition:opacity .4s, transform .4s; }
+  .kpanel li.on { opacity:1; transform:none; }
+  .kpanel li .k { font-size:16px; color:#6d28d9; font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+  .kpanel li .v { font-size:22px; color:#202124; }
+
+  #demo-watermark { color:rgba(60,64,67,.55); border-color:rgba(60,64,67,.25); background:rgba(255,255,255,.7); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="serp-kicker">On ne reste pas sur un seul réseau — on recoupe</div>
+
+  <div class="serp-head">
+    <div class="wordmark"><span class="b">R</span><span class="r">e</span><span class="y">c</span><span class="b">h</span><span class="g">e</span><span class="r">r</span><span class="b">c</span><span class="y">h</span><span class="g">e</span></div>
+    <div class="searchbox">
+      <span class="q">{{prenom}} {{nom}} {{ville}} {{sport}}</span>
+      <span class="mic">🎙️</span>
+      <span class="mag">🔍</span>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <span class="tab active">🔍 Tous</span>
+    <span class="tab">🖼️ Images</span>
+    <span class="tab">📰 Actualités</span>
+    <span class="tab">▶️ Vidéos</span>
+    <span class="tab">🗺️ Maps</span>
+  </div>
+
+  <div class="serp-body">
+    <div class="stats">Environ 7 résultats (0,42 secondes) — exemples <b>entièrement fictifs</b></div>
+
+    <div class="results">
+      <div class="result" data-step="1">
+        <div class="crumbline"><div class="fav">📰</div><div class="site">Presse locale<span class="url">presse-locale-exemple.fr › sports › handball</span></div></div>
+        <div class="ttl">Tournoi régional de {{sport}} — les benjamines du {{club}} sur le podium</div>
+        <div class="snip">… parmi les joueuses, <mark>{{prenom}}</mark> s'est illustrée en deuxième mi-temps.
+          Le club de <mark>{{ville}}</mark> confirme sa bonne saison …</div>
+        <div class="note">Un visage mis sur un club, une ville, une tranche d'âge.</div>
+      </div>
+
+      <div class="result" data-step="2">
+        <div class="crumbline"><div class="fav">🏟️</div><div class="site">Annuaire des clubs<span class="url">annuaire-clubs-exemple.fr › {{club_nospace}}</span></div></div>
+        <div class="ttl">{{club}} — planning des entraînements (saison en cours)</div>
+        <div class="snip">Catégorie -15 filles : <mark>mardi 18h–20h</mark> et <mark>jeudi 18h–20h</mark>,
+          gymnase municipal, {{ville}}. Référent : …</div>
+        <div class="note">Des créneaux récurrents : où, quand, à quelle fréquence.</div>
+      </div>
+
+      <div class="result" data-step="3">
+        <div class="crumbline"><div class="fav">💬</div><div class="site">Forum parents<span class="url">forum-parents-exemple.fr › événements › gala-college</span></div></div>
+        <div class="ttl">Gala de fin d'année du collège — appel aux photos</div>
+        <div class="snip">« Bravo à <mark>{{prenom}}</mark> et aux copines pour le spectacle ! »
+          — commentaire public sous l'album de l'événement.</div>
+        <div class="note">Recoupe l'établissement et l'entourage. Rien de tout cela n'est « privé ».</div>
+      </div>
+    </div>
+
+    <aside class="kpanel">
+      <h3>Infos récoltées</h3>
+      <ul>
+        <li class="on"><span class="k">Scène 1a</span><span class="v">identité, animal, club…</span></li>
+        <li data-step="1"><span class="k">Recoupé</span><span class="v">prénom confirmé + saison</span></li>
+        <li data-step="2"><span class="k">Créneaux</span><span class="v">mar. &amp; jeu. 18h–20h</span></li>
+        <li data-step="2"><span class="k">Lieu</span><span class="v">gymnase municipal, {{ville}}</span></li>
+        <li data-step="3"><span class="k">Entourage</span><span class="v">collège + copines</span></li>
+      </ul>
+    </aside>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+Regie.init({
+  total: 3,
+  name: "recherche",
+  onStep: function (cur) {
+    document.querySelectorAll(".result[data-step]").forEach(function (r) { r.classList.toggle("on", parseInt(r.dataset.step,10) <= cur); });
+    document.querySelectorAll(".kpanel li[data-step]").forEach(function (li) { li.classList.toggle("on", parseInt(li.dataset.step,10) <= cur); });
+  }
+});
+</script>
+</body>
+</html>
