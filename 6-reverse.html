@@ -1,0 +1,235 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6 — On rembobine</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .reverse { flex:1; min-height:0; display:flex; flex-direction:column; }
+  .rv-head { display:flex; align-items:baseline; gap:20px; margin-bottom:14px; }
+  .rv-head h1 { font-size:var(--fs-h1); }
+  .rv-head .count { font:700 24px/1 var(--sys-mono); color:var(--ink-dim); }
+
+  .deck { position:relative; flex:1; min-height:0; }
+  .rcard { position:absolute; inset:0; display:flex; flex-direction:column; gap:20px;
+           opacity:0; transform:translateY(18px); transition:opacity .4s, transform .4s; pointer-events:none; }
+  .rcard.on { opacity:1; transform:none; pointer-events:auto; }
+
+  .rtitle { display:flex; align-items:center; gap:18px; }
+  .rtitle .num { width:54px; height:54px; border-radius:50%; background:var(--accent); color:#fff; flex:none;
+                 display:flex; align-items:center; justify-content:center; font-size:28px; font-weight:800; }
+  .rtitle .txt { font-size:38px; font-weight:800; }
+  .rtitle .rw { display:block; font-size:19px; font-weight:600; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.1em; }
+
+  .rvisual { flex:1; min-height:0; display:flex; align-items:center; justify-content:center; gap:44px; }
+  .rfix { font-size:28px; color:var(--ok); font-weight:700; display:flex; align-items:center; gap:14px; }
+  .rfix::before { content:"✓"; width:40px; height:40px; border-radius:50%; background:var(--ok); color:#06130c;
+                  display:flex; align-items:center; justify-content:center; font-size:26px; flex:none; }
+
+  /* --- mini profil Instagram (privé) --- */
+  .mini-ig { width:640px; background:#fff; color:#111; border-radius:14px; padding:30px 34px; box-shadow:var(--shadow); }
+  .mini-ig .hd { display:flex; align-items:center; gap:24px; }
+  .mini-ig .av { width:92px; height:92px; border-radius:50%; background:linear-gradient(135deg,#ddd,#bbb); flex:none; }
+  .mini-ig .u { font-size:26px; } .mini-ig .u b { font-weight:600; }
+  .mini-ig .locktag { color:#555; font-size:18px; margin-top:4px; }
+  .mini-ig .stats { display:flex; gap:30px; margin-top:16px; font-size:19px; color:#111; }
+  .mini-ig .stats b { font-weight:700; }
+  .mini-ig .private { margin-top:22px; border-top:1px solid #dbdbdb; padding-top:26px; text-align:center; }
+  .mini-ig .private .big { font-size:46px; } .mini-ig .private .t { font-weight:700; font-size:22px; margin-top:8px; }
+  .mini-ig .private .s { color:#777; font-size:18px; margin-top:6px; }
+
+  .osint-x { width:320px; background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px; }
+  .osint-x h3 { font-size:18px; color:var(--ink-dim); text-transform:uppercase; letter-spacing:.1em; margin-bottom:16px; }
+  .osint-x .remain { font-size:18px; color:var(--ink-soft); text-align:center; }
+  .osint-x .remain b { display:block; color:var(--crumb); font-size:26px; margin-top:4px; }
+  .osint-x .gone { list-style:none; margin:18px 0 10px; display:flex; flex-direction:column; gap:9px; }
+  .osint-x .gone li { font-size:18px; color:var(--ink-dim); display:flex; align-items:center; gap:9px; }
+  .osint-x .gone li::before { content:"✕"; color:var(--danger); font-weight:800; }
+  .osint-x .gone li span { text-decoration:line-through; }
+  .osint-x .lessnote { text-align:center; color:var(--ok); font-weight:700; font-size:20px; }
+
+  /* --- mini terminal --- */
+  .mini-term { width:1040px; background:#0c0c12; border:1px solid #2a2a35; border-radius:12px; overflow:hidden; box-shadow:var(--shadow); }
+  .mt-bar { display:flex; align-items:center; gap:8px; padding:11px 16px; background:#191922; border-bottom:1px solid #2a2a35; }
+  .mt-bar .d{width:12px;height:12px;border-radius:50%}.d.r{background:#ff5f56}.d.y{background:#ffbd2e}.d.g{background:#27c93f}
+  .mt-bar .tt{margin-left:12px;color:#9aa0a6;font:600 15px/1 var(--sys-mono)}
+  .mt-body { padding:22px 26px; font-family:var(--sys-mono); font-size:23px; line-height:1.55; color:#d6d6e0; }
+  .mt-body .ok{color:#56d364}.mt-body .dim{color:#7d8590}.mt-body .fail{color:#e5484d}.mt-body .pw{color:#ffd166}
+  .mt-body .bar { height:16px; border-radius:999px; background:#000; border:1px solid #2a2a35; overflow:hidden; margin:10px 0; }
+  .mt-body .bar > i { display:block; height:100%; width:100%; background:#56d364; }
+
+  /* --- bannière ACCÈS REFUSÉ (carte 3) --- */
+  .refuse { margin-top:14px; background:#3a1013; border:2px solid #e5484d; border-radius:14px; padding:18px 22px;
+            display:flex; align-items:center; gap:18px; }
+  .refuse .x { font-size:48px; color:#e5484d; } .refuse .rt { font-size:34px; font-weight:800; color:#ff6b6e; letter-spacing:.04em; }
+  .refuse .rs { font-size:18px; color:#ffb3b5; }
+
+  /* --- mini DM --- */
+  .mini-dm { width:620px; background:#000; border:1px solid #2a2a2a; border-radius:26px; overflow:hidden; box-shadow:var(--shadow); }
+  .mini-dm .hd { padding:16px 20px; border-bottom:1px solid #1f1f1f; color:#fff; font-weight:600; font-size:20px; }
+  .mini-dm .bd { padding:20px; display:flex; flex-direction:column; gap:12px; }
+  .mini-dm .b { max-width:80%; padding:13px 18px; border-radius:22px; font-size:21px; color:#fff; }
+  .mini-dm .b.them { align-self:flex-start; background:#262626; }
+  .mini-dm .b.me { align-self:flex-end; background:#3797f0; }
+  .mini-dm .link { align-self:flex-start; width:78%; border:1px solid #333; border-radius:16px; overflow:hidden; position:relative; opacity:.5; }
+  .mini-dm .link .th { height:90px; background:repeating-linear-gradient(45deg,#1a1a1a 0 14px,#141414 14px 28px); display:flex; align-items:center; justify-content:center; font-size:34px; }
+  .mini-dm .link .lk { padding:10px 14px; color:#8e8e8e; font-size:16px; }
+  .mini-dm .shield { align-self:flex-start; margin-top:4px; background:rgba(86,211,100,.14); border:1px solid #2ec27e;
+                     color:#8ff0b5; border-radius:12px; padding:12px 16px; font-size:20px; font-weight:600; }
+
+  /* réplique finale */
+  .final-quote { position:absolute; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; gap:26px; text-align:center; padding:0 120px; }
+  .final-quote.on { display:flex; animation:fqin .5s ease; }
+  @keyframes fqin { from{opacity:0} to{opacity:1} }
+  .final-quote .q { font-size:var(--fs-h1); font-weight:800; line-height:1.25; }
+  .final-quote .q .g { color:var(--ok); } .final-quote .q .r { color:var(--danger); }
+  .final-quote .by { font-size:var(--fs-body); color:var(--ink-dim); }
+
+  .dots { display:flex; gap:12px; justify-content:center; margin-top:16px; }
+  .dot { width:14px; height:14px; border-radius:50%; background:var(--line); transition:background .3s, transform .3s; }
+  .dot.on { background:var(--accent-2); transform:scale(1.15); }
+  .dot.done { background:var(--ok); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="reverse">
+    <div class="rv-head"><h1>On rembobine</h1><span class="count" id="count"></span></div>
+
+    <div class="deck" id="deck">
+
+      <!-- Carte 1 : compte privé -->
+      <div class="rcard" data-step="1">
+        <div class="rtitle"><span class="num">1</span><span class="txt"><span class="rw">On rembobine — l'OSINT</span>Le compte devient privé</span></div>
+        <div class="rvisual">
+          <div class="mini-ig">
+            <div class="hd">
+              <div class="av"></div>
+              <div><div class="u"><b>sarah_m2009</b> 🔒</div><div class="locktag">Compte privé</div>
+                <div class="stats"><span><b>34</b> publications</span><span><b>412</b> abonnés</span></div></div>
+            </div>
+            <div class="private"><div class="big">🔒</div><div class="t">Ce compte est privé.</div>
+              <div class="s">Abonne-toi pour voir ses photos et vidéos.</div></div>
+          </div>
+          <div class="osint-x">
+            <h3>📋 Infos récoltées</h3>
+            <div class="remain">encore visible dans le pseudo :<b>Sarah · M · 2009</b></div>
+            <ul class="gone">
+              <li><span>club &amp; ville</span></li>
+              <li><span>le chien</span></li>
+              <li><span>créneaux d'entraînement</span></li>
+              <li><span>localisation &amp; absences</span></li>
+            </ul>
+            <div class="lessnote">↓ beaucoup moins qu'avant</div>
+          </div>
+        </div>
+        <div class="rfix">Compte privé + ne pas publier « seule chez mamie » en direct.</div>
+      </div>
+
+      <!-- Carte 2 : mot de passe long -->
+      <div class="rcard" data-step="2">
+        <div class="rtitle"><span class="num">2</span><span class="txt"><span class="rw">On rembobine — le mot de passe</span>Une phrase longue qui ne raconte rien</span></div>
+        <div class="rvisual">
+          <div class="mini-term">
+            <div class="mt-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="tt">attaquant@kali: ~ — hydra</span></div>
+            <div class="mt-body">
+              <div>nouveau mot de passe : <span class="pw">3cureuil-Vélo-Tempête</span> <span class="dim">(4 mots, 21 caractères)</span></div>
+              <div class="bar"><i></i></div>
+              <div><span class="dim">[STATUS]</span> 9473 / 9473 essais testés</div>
+              <div><span class="fail">[ÉCHEC]</span> 0 mot de passe valide — <span class="fail">absent de toutes les listes</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="rfix">Une phrase longue, sans lien avec sa vie : introuvable par devinette.</div>
+      </div>
+
+      <!-- Carte 3 : 2FA (image forte) -->
+      <div class="rcard" data-step="3">
+        <div class="rtitle"><span class="num">3</span><span class="txt"><span class="rw">On rembobine — « et là ça passe »</span>La double authentification (2FA)</span></div>
+        <div class="rvisual">
+          <div class="mini-term">
+            <div class="mt-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="tt">attaquant@kali: ~ — connexion</span></div>
+            <div class="mt-body">
+              <div><span class="dim">[.]</span> identifiant + mot de passe <span class="ok">✓</span></div>
+              <div><span class="dim">[2FA]</span> Instagram envoie un code à 6 chiffres sur le téléphone de Sarah</div>
+              <div><span class="dim">[.]</span> code : <span class="fail">_ _ _ _ _ _</span> <span class="dim">(l'attaquant ne l'a pas)</span></div>
+              <div class="refuse"><span class="x">✗</span><div><div class="rt">ACCÈS REFUSÉ</div><div class="rs">code de vérification requis</div></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="rfix">Même écran qu'avant. Un détail change. <b>Ça ne marche plus.</b></div>
+      </div>
+
+      <!-- Carte 4 : on n'installe rien -->
+      <div class="rcard" data-step="4">
+        <div class="rtitle"><span class="num">4</span><span class="txt"><span class="rw">On rembobine — le faux jeu en MP</span>On n'installe rien reçu en privé</span></div>
+        <div class="rvisual">
+          <div class="mini-dm">
+            <div class="hd">lucas_hb_31</div>
+            <div class="bd">
+              <div class="b them">tiens essaie ce jeu 👾 c'est trop addictif</div>
+              <div class="link"><div class="th">👾</div><div class="lk">suresuperjeu-exemple.fictif/SuperGoal.apk</div></div>
+              <div class="shield">🛡️ Lien reçu en privé → on n'ouvre pas, on n'installe pas.</div>
+            </div>
+          </div>
+        </div>
+        <div class="rfix">Aucun lien, aucune appli reçus en message privé. Dans le doute : on n'ouvre pas.</div>
+      </div>
+
+      <!-- Carte 5 : j'en parle -->
+      <div class="rcard" data-step="5">
+        <div class="rtitle"><span class="num">5</span><span class="txt"><span class="rw">On rembobine — le chantage</span>En parler tôt à un adulte</span></div>
+        <div class="rvisual">
+          <div class="mini-dm">
+            <div class="hd">⚠ inconnu</div>
+            <div class="bd">
+              <div class="b them">100€ ou je publie tout. pas un mot à tes parents 😈</div>
+              <div class="b me">je bloque. je garde les preuves. j'en parle à un adulte (119).</div>
+              <div class="shield">🛡️ Le réflexe « j'en parle » casse le levier du chantage.</div>
+            </div>
+          </div>
+        </div>
+        <div class="rfix">On ne paie pas, on ne reste pas seul·e : on en parle tôt à un adulte.</div>
+      </div>
+
+      <!-- Réplique finale -->
+      <div class="final-quote" data-step="6">
+        <div class="q">« Compte privé + mot de passe long + <span class="g">2FA</span><br>→ <span class="r">j'abandonne</span> et je passe au suivant. »</div>
+        <div class="by">— l'attaquant, beau joueur</div>
+      </div>
+    </div>
+
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+const TOTAL = 6;
+const dots = document.getElementById("dots");
+for (let i = 1; i <= 5; i++) { const d = document.createElement("div"); d.className = "dot"; dots.appendChild(d); }
+
+Regie.init({
+  total: TOTAL,
+  name: "rembobine",
+  onStep: function(cur){
+    document.querySelectorAll(".rcard[data-step]").forEach(function(c){
+      c.classList.toggle("on", parseInt(c.dataset.step,10) === cur && cur <= 5);
+    });
+    document.querySelector('.final-quote[data-step="6"]').classList.toggle("on", cur >= 6);
+    document.getElementById("count").textContent = cur === 0 ? "" : (cur <= 5 ? (cur + " / 5") : "bilan");
+    document.querySelectorAll("#dots .dot").forEach(function(d,i){
+      const n = i + 1;
+      d.classList.toggle("on", n === cur && cur <= 5);
+      d.classList.toggle("done", n < cur || cur > 5);
+    });
+  }
+});
+</script>
+</body>
+</html>

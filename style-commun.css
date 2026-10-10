@@ -1,0 +1,319 @@
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+/* =========================================================================
+   style-commun.css — tokens couleurs, reset, utilitaires régie.
+   Pensé pour projection 1920×1080, lisible à 8–10 m. Aucune police distante.
+   ========================================================================= */
+
+:root {
+  /* Palette sobre */
+  --bg:        #0e1116;
+  --bg-2:      #161b22;
+  --panel:     #1c232d;
+  --panel-2:   #232c38;
+  --ink:       #eef2f7;
+  --ink-soft:  #aeb9c7;
+  --ink-dim:   #6b7686;
+  --line:      #2a333f;
+  --accent:    #8b5cf6;   /* violet ESISAR */
+  --accent-2:  #a78bfa;   /* violet clair */
+  --ok:        #2ec27e;   /* vert "accès" / validation */
+  --ok-deep:   #0f7b4f;
+  --warn:      #e0a458;   /* ambre, jamais agressif */
+  --danger:    #e5484d;   /* rouge réservé aux rares lignes clés */
+  --crumb:     #c4b5fd;   /* surlignage "miette" OSINT (violet clair) */
+  --shadow:    0 10px 40px rgba(0,0,0,.45);
+
+  /* Échelle typographique projection */
+  /* Tailles fixes : le canvas .stage (1920×1080) est mis à l'échelle en bloc,
+     donc des px fixes se mettent à l'échelle uniformément (pas de vw ici). */
+  --fs-hero:   88px;
+  --fs-h1:     56px;
+  --fs-h2:     38px;
+  --fs-body:   26px;
+  --fs-small:  19px;
+
+  --sys-ui: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --sys-mono: "Cascadia Code", "SF Mono", "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sys-ui);
+  font-size: var(--fs-body);
+  line-height: 1.45;
+  overflow: hidden;              /* pas de scroll en projection */
+  -webkit-font-smoothing: antialiased;
+}
+
+body { position: relative; }
+
+/* Canvas FIXE 1920×1080, mis à l'échelle en bloc pour toujours tenir dans la
+   fenêtre (projection plein écran OU double-clic dans une fenêtre plus petite).
+   regie.js calcule l'échelle ; rien n'est jamais coupé en bas. */
+.stage {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1920px;
+  height: 1080px;
+  transform: translate(-50%, -50%) scale(1);
+  transform-origin: center center;
+  padding: 56px 72px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ---------- Utilitaires de révélation (régie) ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .5s ease, transform .5s ease;
+  pointer-events: none;
+}
+.reveal.on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.fade { opacity: 0; transition: opacity .5s ease; }
+.fade.on { opacity: 1; }
+
+/* ---------- Placeholders images (jamais de page cassée) ---------- */
+/* Usage : <div class="ph" data-label="[photo]"><img src="assets/x.jpg" onerror="Regie.imgFail(this)"></div> */
+.ph {
+  position: relative;
+  background:
+    repeating-linear-gradient(45deg, #2a2f38 0 14px, #262b33 14px 28px);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ph::after {
+  content: attr(data-label);
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-dim);
+  font-size: var(--fs-small);
+  letter-spacing: .04em;
+  text-align: center;
+  padding: 8px;
+  z-index: 0;
+}
+.ph img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ph img.failed { display: none; }
+
+/* ---------- Filigrane de sûreté "DÉMO" (masquable touche W) ---------- */
+#demo-watermark {
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  z-index: 9000;
+  font: 600 14px/1 var(--sys-mono);
+  letter-spacing: .25em;
+  color: rgba(255,255,255,.22);
+  border: 1px solid rgba(255,255,255,.14);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(0,0,0,.25);
+  user-select: none;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+#demo-watermark.hidden { opacity: 0; }
+
+/* ---------- Hint plein écran (touche F) ---------- */
+#fs-hint {
+  position: fixed;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  z-index: 9000;
+  background: var(--panel);
+  color: var(--ink-soft);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 18px;
+  font-size: var(--fs-small);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s ease, transform .35s ease;
+}
+#fs-hint.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+#fs-hint kbd {
+  font-family: var(--sys-mono);
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 1px 7px;
+  color: var(--ink);
+}
+
+/* ---------- Indicateur de "temps" pour nommer les captures (touche P) ---------- */
+#step-indicator {
+  position: fixed;
+  left: 14px;
+  bottom: 12px;
+  z-index: 9000;
+  font: 600 15px/1 var(--sys-mono);
+  color: var(--ink-soft);
+  background: rgba(0,0,0,.4);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 11px;
+  user-select: none;
+  pointer-events: none;
+  display: none;
+}
+#step-indicator.on { display: block; }
+
+/* ---------- Bandeau latéral "Infos récoltées" (scènes OSINT) ---------- */
+.osint-panel {
+  position: absolute;
+  top: 48px;
+  right: 0;
+  width: 340px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow);
+}
+.osint-panel h3 {
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--ink-dim);
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.osint-panel h3::before { content: "📋"; }
+.osint-panel ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.osint-panel li {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  font-size: var(--fs-small);
+  color: var(--ink);
+  opacity: 0;
+  transform: translateX(10px);
+  transition: opacity .45s ease, transform .45s ease;
+}
+.osint-panel li.on { opacity: 1; transform: none; }
+.osint-panel li .k { color: var(--crumb); font-weight: 700; white-space: nowrap; }
+.osint-panel li .v { color: var(--ink-soft); }
+
+/* ---------- Surlignage "miette" OSINT ---------- */
+.crumb-mark {
+  position: absolute;
+  z-index: 5;                       /* au-dessus des images (img = z-index 1) */
+  border: 3px solid var(--crumb);
+  border-radius: 10px;
+  box-shadow: 0 0 0 4px rgba(139,92,246,.22);
+  opacity: 0;
+  transform: scale(1.06);
+  transition: opacity .4s ease, transform .4s ease;
+  pointer-events: none;
+}
+.crumb-mark.on { opacity: 1; transform: none; }
+.crumb-label {
+  position: absolute;
+  z-index: 6;                       /* étiquette flèche, au-dessus de tout le reste de la grille */
+  background: var(--crumb);
+  color: #2e1065;
+  font-weight: 700;
+  font-size: var(--fs-small);
+  padding: 4px 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+  box-shadow: var(--shadow);
+}
+
+/* ---------- Titres & textes génériques ---------- */
+.kicker {
+  font-size: var(--fs-small);
+  text-transform: uppercase;
+  letter-spacing: .22em;
+  color: var(--ink-dim);
+  margin-bottom: 18px;
+}
+h1.hero { font-size: var(--fs-hero); font-weight: 800; line-height: 1.05; letter-spacing: -.02em; }
+h1 { font-size: var(--fs-h1); font-weight: 800; line-height: 1.08; }
+h2 { font-size: var(--fs-h2); font-weight: 700; }
+p.lead { font-size: var(--fs-body); color: var(--ink-soft); max-width: 60ch; }
+
+.center-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 28px;
+}
+
+/* Bandeau "FICTIF" superposable */
+.fictif-banner {
+  background: var(--panel-2);
+  border: 1px solid var(--accent);
+  border-left: 6px solid var(--accent);
+  border-radius: 12px;
+  padding: 22px 28px;
+  font-size: var(--fs-body);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+}
+.fictif-banner strong { color: var(--accent-2); }
+
+/* Lignes-clés rouges (rares) */
+.key-red {
+  color: var(--danger);
+  font-weight: 800;
+}
+
+/* Boutons / pills décoratifs */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-size: var(--fs-small);
+  color: var(--ink-soft);
+}
+
+/* Ressources (clôture) */
+.resources { display: flex; flex-wrap: wrap; gap: 18px; }
+.resource {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 18px 24px;
+  min-width: 220px;
+}
+.resource .num { font-size: var(--fs-h2); font-weight: 800; color: var(--accent-2); }
+.resource .desc { font-size: var(--fs-small); color: var(--ink-soft); margin-top: 4px; }
+
+/* Accessibilité : réduire les animations si demandé */
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .fade, .osint-panel li, .crumb-mark { transition-duration: .001ms; }
+}

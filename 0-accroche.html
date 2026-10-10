@@ -1,0 +1,88 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>0 — Sarah, 15 ans</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .accroche { flex:1; min-height:0; display:flex; align-items:center; gap:88px; }
+
+  .left { position:relative; flex:none; }
+  .avatar-ring { width:392px; height:392px; border-radius:50%; padding:7px;
+                 background:conic-gradient(from 0deg,#c084fc,#8b5cf6,#a78bfa,#c084fc); box-shadow:var(--shadow); }
+  .avatar { width:100%; height:100%; border-radius:50%; border:6px solid var(--bg); overflow:hidden; background:#20262e; }
+  .avatar.ph { border-radius:50%; }
+  .avatar img { border-radius:50%; }
+  .stamp { position:absolute; bottom:26px; left:50%; transform:translateX(-50%) rotate(-7deg) scale(.7);
+           background:var(--danger); color:#fff; font:800 32px/1 var(--sys-mono); letter-spacing:.14em;
+           padding:12px 30px; border-radius:12px; box-shadow:0 14px 40px rgba(0,0,0,.5);
+           opacity:0; transition:opacity .45s cubic-bezier(.2,.8,.3,1.4), transform .45s cubic-bezier(.2,.8,.3,1.4); }
+  .stamp.on { opacity:1; transform:translateX(-50%) rotate(-7deg) scale(1); }
+
+  .right { flex:1; }
+  .right .hero { font-size:96px; line-height:1; margin:10px 0 18px; }
+  .right .sub { font-size:28px; color:var(--ink-soft); max-width:26ch; }
+
+  .fiche { background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:26px 34px; margin-top:30px; max-width:640px; box-shadow:var(--shadow); }
+  .fiche dl { display:grid; grid-template-columns:auto 1fr; gap:14px 26px; font-size:25px; }
+  .fiche dt { color:var(--ink-dim); } .fiche dd { color:var(--ink); font-weight:600; }
+
+  .fictif-banner { margin-top:4px; display:flex; align-items:center; gap:20px; font-size:28px; }
+  .fictif-banner .shield { font-size:44px; }
+  .fictif-banner .tag { background:var(--accent); color:#fff; font-weight:800; padding:4px 14px; border-radius:8px; letter-spacing:.06em; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="accroche">
+    <div class="left">
+      <div class="avatar-ring">
+        <div class="avatar ph" data-label="[avatar généré — fictif]">
+          <img src="assets/sarah.jpg" alt="Avatar fictif de Sarah" onerror="this.classList.add('failed')">
+        </div>
+      </div>
+      <div class="stamp" id="stamp">FICTIF</div>
+    </div>
+
+    <div class="right">
+      <div class="kicker">Colloque — Protection de l'enfance</div>
+      <h1 class="hero">Sarah, 15 ans</h1>
+      <p class="sub">On va suivre un inconnu, pas à pas : ce qu'il peut reconstituer sur elle… puis ce qu'il en fait.</p>
+
+      <div class="fiche reveal" id="fiche">
+        <dl>
+          <dt>Prénom</dt><dd>{{prenom}} {{nom}}</dd>
+          <dt>Pseudo</dt><dd>{{pseudo}}</dd>
+          <dt>Ville</dt><dd>{{ville}}</dd>
+          <dt>Passion</dt><dd>{{sport}} — {{club}}</dd>
+          <dt>À la maison</dt><dd>un chien, {{chien}} 🐶</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="fictif-banner reveal" id="banner">
+    <span class="shield">🛡️</span>
+    <span><span class="tag">FICTIF</span> &nbsp;Sarah n'existe pas. Tout est faux, hors ligne, aucune méthode reproductible — aucune donnée réelle, aucune capture.</span>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+Regie.init({
+  total: 2,
+  name: "accroche",
+  onStep: function (cur) {
+    document.getElementById("fiche").classList.toggle("on", cur >= 1);
+    document.getElementById("banner").classList.toggle("on", cur >= 2);
+    document.getElementById("stamp").classList.toggle("on", cur >= 2);
+  }
+});
+</script>
+</body>
+</html>

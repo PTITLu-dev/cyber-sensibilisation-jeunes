@@ -1,0 +1,192 @@
+<!-- Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE -->
+<!-- Reconstitution d'une messagerie privée. Aucune image montrée : média "[photo privée]" masqué.
+     But pédagogique : montrer qu'une photo partagée il y a longtemps « reste » et ressurgit. -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>5 — Sextorsion</title>
+<link rel="stylesheet" href="style-commun.css">
+<style>
+  .sext { flex:1; min-height:0; display:grid; grid-template-columns:720px 1fr; gap:56px; align-items:center; }
+
+  /* Téléphone — messagerie façon Instagram (sombre) */
+  .phone { position:relative; height:966px; background:#000; border:1px solid #2a2a2a; border-radius:36px; overflow:hidden;
+           display:flex; flex-direction:column; box-shadow:var(--shadow); }
+  .dm-head { display:flex; align-items:center; gap:14px; padding:18px 22px; border-bottom:1px solid #1f1f1f; }
+  .dm-head .back { color:#fff; font-size:26px; }
+  .dm-head .av { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#444,#2a2a2a); flex:none; }
+  .dm-head .who { flex:1; font-weight:600; font-size:21px; color:#fff; }
+  .dm-head .who small { display:block; color:#8e8e8e; font-weight:400; font-size:15px; }
+  .dm-head .ico { color:#fff; font-size:22px; }
+
+  .dm-body { flex:1; min-height:0; overflow:hidden; padding:16px 18px; display:flex; flex-direction:column; gap:7px; background:#000; }
+  .daysep { text-align:center; color:#8e8e8e; font-size:15px; font-weight:600; letter-spacing:.02em; margin:16px 0 10px; }
+  .daysep.now { color:#e5484d; }
+  .daysep.hot { color:#c4b5fd; }
+
+  /* masquage générique des éléments révélés (séparateurs de date, etc.) */
+  .reveal-el { opacity:0; transition:opacity .4s ease, transform .4s ease; }
+  .reveal-el.on { opacity:1; }
+
+  .row { display:flex; gap:10px; align-items:flex-end; opacity:0; transform:translateY(8px); transition:opacity .35s, transform .35s; }
+  .row.on { opacity:1; transform:none; }
+  .row.me { justify-content:flex-end; }
+  .row .av-sm { width:30px; height:30px; border-radius:50%; background:#333; flex:none; }
+  .msg { max-width:74%; padding:13px 18px; border-radius:24px; font-size:23px; line-height:1.35; }
+  .msg.them { background:#262626; color:#fff; border-bottom-left-radius:7px; }
+  .msg.me   { background:#3797f0; color:#fff; border-bottom-right-radius:7px; }
+  .msg.threat { background:#3a1f23; color:#ffd7d8; border:1px solid #7a3b40; }
+
+  .tag-inconnu { align-self:flex-start; font-size:14px; color:#e5484d; font-weight:700; margin:6px 0 -2px 40px; opacity:0; transition:opacity .35s; }
+  .tag-inconnu.on { opacity:1; }
+
+  .photo-msg { width:230px; height:290px; border-radius:20px; overflow:hidden; position:relative;
+    background:repeating-linear-gradient(45deg,#1a1a1a 0 16px,#141414 16px 32px); border:1px solid #2a2a2a;
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px; color:#8e8e8e; font-size:17px; }
+  .photo-msg .lock { font-size:40px; opacity:.8; }
+
+  .persist { background:rgba(196,181,253,.12); border:1px solid var(--accent); border-radius:14px;
+             padding:14px 18px; font-size:20px; color:#fff; line-height:1.4;
+             opacity:0; transform:translateY(8px); transition:opacity .4s, transform .4s; }
+  .persist.on { opacity:1; transform:none; }
+  .persist b { color:var(--accent-2); }
+
+  /* --- LOUPE : zoom sur la date (temps 1) --- */
+  .spotlight { position:absolute; inset:0; background:rgba(0,0,0,.6); opacity:0; transition:opacity .4s; z-index:4; pointer-events:none; }
+  .spotlight.on { opacity:1; }
+  .loupe-wrap { position:absolute; top:84px; left:50%; transform:translateX(-50%) scale(.6); transform-origin:center top;
+                z-index:5; display:flex; flex-direction:column; align-items:center; opacity:0;
+                transition:opacity .45s cubic-bezier(.2,.8,.3,1.4), transform .45s cubic-bezier(.2,.8,.3,1.4); pointer-events:none; }
+  .loupe-wrap.on { opacity:1; transform:translateX(-50%) scale(1); }
+  .loupe { position:relative; width:256px; height:256px; border-radius:50%; border:11px solid #c4b5fd;
+    background:radial-gradient(circle at 34% 28%, rgba(255,255,255,.22), rgba(10,8,18,.9));
+    box-shadow:0 0 0 5px rgba(0,0,0,.55), 0 26px 64px rgba(0,0,0,.65), inset 0 0 44px rgba(196,181,253,.3);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
+  .loupe .zlabel { font-size:17px; color:#c4b5fd; letter-spacing:.08em; text-transform:uppercase; }
+  .loupe .zdate { font-size:50px; font-weight:800; color:#fff; text-align:center; line-height:1.05; text-shadow:0 2px 12px rgba(0,0,0,.9); }
+  .loupe-handle { position:absolute; bottom:-26px; right:-30px; width:28px; height:96px; border-radius:16px;
+    background:linear-gradient(#c4b5fd,#7c5cff); transform:rotate(-45deg); transform-origin:top center; box-shadow:0 10px 24px rgba(0,0,0,.6); }
+  .loupe-callout { margin-top:22px; background:#c4b5fd; color:#2e1065; font-weight:800; font-size:24px;
+    padding:12px 24px; border-radius:999px; box-shadow:0 12px 34px rgba(0,0,0,.45); }
+  .loupe-callout b { color:#4c1d95; }
+
+  /* Narrateur */
+  .narr { display:flex; flex-direction:column; gap:20px; max-width:900px; }
+  .narr .kicker { margin:0; } .narr h1 { font-size:var(--fs-h1); }
+  .block { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:24px 28px;
+           opacity:0; transform:translateY(12px); transition:opacity .5s, transform .5s; }
+  .block.on { opacity:1; transform:none; }
+  .block h2 { font-size:var(--fs-h2); margin-bottom:12px; }
+  .block p { font-size:var(--fs-body); color:var(--ink-soft); }
+  .levers { display:flex; flex-direction:column; gap:13px; }
+  .lever { display:flex; gap:14px; align-items:baseline; font-size:var(--fs-body); }
+  .lever .n { color:var(--accent-2); font-weight:800; font-family:var(--sys-mono); }
+  .lever .tag { color:var(--ink-dim); font-size:var(--fs-small); }
+  .anti { border-left:6px solid var(--ok); }
+  .anti p { color:var(--ink); font-weight:600; font-size:var(--fs-h2); }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="sext">
+    <div class="phone">
+      <div class="dm-head">
+        <span class="back">‹</span>
+        <div class="av"></div>
+        <div class="who">lena_.k <small>vous êtes amies depuis 2021</small></div>
+        <span class="ico">📞</span><span class="ico">📹</span>
+      </div>
+      <div class="dm-body" id="body">
+
+        <div class="daysep hot reveal-el" data-step="1">12 mars 2023</div>
+
+        <div class="row them reveal-el" data-step="2"><div class="av-sm"></div><div class="msg them">coucou 🥰 alors hier soir ?</div></div>
+        <div class="row me reveal-el" data-step="2"><div class="msg me">trop bien 🥰 je te raconte</div></div>
+        <div class="row me reveal-el" data-step="2"><div class="msg me">rien que pour toi 🙈</div></div>
+
+        <div class="row me reveal-el" data-step="3"><div class="photo-msg"><span class="lock">🔒</span>[photo privée]</div></div>
+        <div class="row me reveal-el" data-step="3"><div class="msg me">tu supprimes après hein 🙏</div></div>
+        <div class="row them reveal-el" data-step="3"><div class="av-sm"></div><div class="msg them">promis juré 😘</div></div>
+
+        <div class="persist reveal-el" data-step="4">
+          🌐 3 ans plus tard, la photo est <b>toujours là</b> : dans la conversation, les sauvegardes,
+          le téléphone de Lena. Personne ne l'a « vraiment » supprimée.
+        </div>
+
+        <div class="daysep now reveal-el" data-step="5">AUJOURD'HUI · depuis le compte piraté de Sarah</div>
+        <div class="tag-inconnu reveal-el" data-step="5">⚠ inconnu</div>
+        <div class="row them reveal-el" data-step="5"><div class="av-sm"></div><div class="msg threat">je suis dans ton compte. je l'ai retrouvée 😏</div></div>
+        <div class="row them reveal-el" data-step="6"><div class="av-sm"></div><div class="msg threat">100€ ou je la publie à tous tes abonnés 😈</div></div>
+        <div class="row them reveal-el" data-step="7"><div class="av-sm"></div><div class="msg threat">t'as 2h. et surtout pas un mot à tes parents.</div></div>
+      </div>
+
+      <!-- Loupe sur la date (temps 1 uniquement) -->
+      <div class="spotlight" id="spotlight"></div>
+      <div class="loupe-wrap" id="loupe">
+        <div class="loupe">
+          <div class="loupe-handle"></div>
+          <div class="zlabel">envoyé le</div>
+          <div class="zdate">12 mars<br>2023</div>
+        </div>
+        <div class="loupe-callout">🕰️ une discussion d'<b>il y a 3 ans</b></div>
+      </div>
+    </div>
+
+    <div class="narr">
+      <div class="kicker">Une fois le compte piraté — ce qu'il en fait</div>
+      <h1>La sextorsion</h1>
+
+      <div class="block" data-step="8">
+        <h2>Pourquoi c'est possible ?</h2>
+        <p>Une photo partagée en confiance, qu'on croyait supprimée (« tu supprimes après »), <b>reste</b>
+           des années. L'attaquant la retrouve dans le compte et s'en sert comme d'une arme.
+           <b>Sur Internet, rien ne s'efface vraiment.</b></p>
+      </div>
+
+      <div class="block" data-step="9">
+        <h2>Trois ressorts — ils sont dans les messages</h2>
+        <div class="levers">
+          <div class="lever"><span class="n">1</span><span><b>Le levier</b> — une vieille image retrouvée. <span class="tag">« je l'ai retrouvée »</span></span></div>
+          <div class="lever"><span class="n">2</span><span><b>Le silence</b> — la honte, le secret. <span class="tag">« pas un mot à tes parents »</span></span></div>
+          <div class="lever"><span class="n">3</span><span><b>La rapidité</b> — court-circuiter la réflexion. <span class="tag">« t'as 2h »</span></span></div>
+        </div>
+      </div>
+
+      <div class="block anti" data-step="9">
+        <p>La victime n'a <b>jamais rien provoqué</b>. On en parle, on ne paie pas, on garde les preuves.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="regie.js"></script>
+<script>
+/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+const TIMINGS = {};
+const body = document.getElementById("body");
+Regie.init({
+  total: 9,
+  name: "sextorsion",
+  onStep: function(cur){
+    document.querySelectorAll(".reveal-el[data-step], .tag-inconnu[data-step]").forEach(function(el){
+      el.classList.toggle("on", parseInt(el.dataset.step,10) <= cur);
+    });
+    document.querySelectorAll(".block[data-step]").forEach(function(b){
+      b.classList.toggle("on", parseInt(b.dataset.step,10) <= cur);
+    });
+    // loupe + spotlight : uniquement au temps 1 (zoom sur la date)
+    document.getElementById("loupe").classList.toggle("on", cur === 1);
+    document.getElementById("spotlight").classList.toggle("on", cur === 1);
+    // suivre la descente dans la conversation (pas pendant la loupe)
+    if (cur >= 2) {
+      var curEls = document.querySelectorAll('.reveal-el[data-step="' + cur + '"]');
+      if (curEls.length) setTimeout(function(){ curEls[curEls.length-1].scrollIntoView({block:"nearest"}); }, 120);
+    } else { body.scrollTop = 0; }
+  }
+});
+</script>
+</body>
+</html>
