@@ -1,4 +1,4 @@
-/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+/* Démo « Sarah » · © 2026 Lucas Petit (PTIT'Lu) · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
 /* =========================================================================
    regie.js — moteur de régie partagé par toutes les scènes.
    - Substitution des gabarits {{clé}} depuis SARAH (config.js)
@@ -69,12 +69,12 @@
 
     /* --- Enchaînement automatique des scènes (version "complète") --- */
     CHAIN: true,
+    /* Scènes publiées. Les couvertures intro.html / conclusion.html (non publiées) s'ajoutent
+       automatiquement si le fichier local scenes-locales.js existe (voir README). */
     SCENES: [
-      "intro.html",
       "0-accroche.html", "1a-profil.html", "1b-recherche.html", "1c-fiche.html",
       "2-motdepasse.html", "3-connexion.html", "4-planb.html", "5-compte.html",
-      "6-reverse.html", "6b-archive.html", "7-recrutement.html", "8-cloture.html",
-      "conclusion.html"
+      "6-reverse.html", "6b-archive.html", "7-recrutement.html", "8-cloture.html"
     ],
     _file: function () { return (location.pathname.split("/").pop() || "").toLowerCase(); },
     _sceneIndex: function () { return this.SCENES.indexOf(this._file()); },
@@ -223,4 +223,18 @@
   /* Expose */
   window.Regie = Regie;
   window.RegieApplyTemplates = applyTemplates;
+
+  /* Couvertures locales (non publiées) : en ouverture directe du fichier, si scenes-locales.js
+     existe à côté des scènes, il peut définir
+     window.SCENES_LOCALES = { avant: ["intro.html"], apres: ["conclusion.html"] }; */
+  if (location.protocol === "file:") {
+    var locales = document.createElement("script");
+    locales.src = "scenes-locales.js";
+    locales.onload = function () {
+      var x = window.SCENES_LOCALES || {};
+      Regie.SCENES = (x.avant || []).concat(Regie.SCENES, x.apres || []);
+    };
+    locales.onerror = function () { locales.remove(); };
+    document.head.appendChild(locales);
+  }
 })();

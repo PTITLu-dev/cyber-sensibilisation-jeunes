@@ -15,6 +15,9 @@ aucun mot de passe n'est lu, aucune attaque réelle n'est réalisée. Les écran
 ---
 
 ## ▶️ Lancer la démo
+**En ligne :** [ptitlu-dev.github.io/cyber-sensibilisation-jeunes](https://ptitlu-dev.github.io/cyber-sensibilisation-jeunes/) — puis `Espace` pour avancer.
+
+**En local (présentation) :**
 1. Télécharger / cloner le dossier.
 2. Double-cliquer sur **`0-accroche.html`** (ça s'ouvre dans le navigateur — **aucune connexion requise**, marche en mode avion).
 3. **F11** pour le plein écran.
@@ -58,10 +61,22 @@ Tout s'**enchaîne automatiquement** d'une scène à l'autre : il n'y a qu'à ap
 ---
 
 ## 📄 Licence & réutilisation
-© 2026 **PTIT'Lu** — **Tous droits réservés.**
+© 2026 **Lucas Petit (PTIT'Lu)** — **Tous droits réservés.**
 Projet visible publiquement, mais **toute réutilisation nécessite mon autorisation**
 (y compris pour un établissement scolaire ou une association) — **merci de me demander**.
 Voir le fichier [`LICENSE`](LICENSE).
 
 ## ✍️ Auteur
-Réalisé par **PTIT'Lu**.
+Réalisé par **Lucas Petit** (PTIT'Lu), élève-ingénieur à l'ESISAR — Grenoble INP ·
+[petitlucas.com](https://petitlucas.com/a-propos.html) · [github.com/PTITLu-dev](https://github.com/PTITLu-dev)
+
+<details>
+<summary>Pages de couverture (version de présentation)</summary>
+
+Les couvertures `intro.html` et `conclusion.html` ne sont pas publiées. Pour les enchaîner
+automatiquement en local, créer à côté des scènes un fichier `scenes-locales.js` (ignoré par git) :
+
+```js
+window.SCENES_LOCALES = { avant: ["intro.html"], apres: ["conclusion.html"] };
+```
+</details>

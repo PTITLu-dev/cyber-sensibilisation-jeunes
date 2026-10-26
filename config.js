@@ -1,4 +1,4 @@
-/* Démo « Sarah » · © 2026 PTIT'Lu · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
+/* Démo « Sarah » · © 2026 Lucas Petit (PTIT'Lu) · 100% FICTIF · NE CAPTURE AUCUNE DONNÉE */
 /* =========================================================================
    config.js — Variables de personnalisation centralisées.
    Tout changer d'un seul endroit. Chargé par toutes les scènes AVANT regie.js.
